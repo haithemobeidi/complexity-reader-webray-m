@@ -13,20 +13,27 @@ dist/
 # Windows Zone Identifier files
 *.Zone.Identifier
 
-# Reference/screenshot files (not needed for extension)
+# Development debris (not needed for extension)
 references/
 packages/
+index.html
 
-# Development documentation (keep core docs)
+# Development documentation (keep only essential docs)
 docs/analysis/
 docs/planning/
 docs/sessions/
 docs/testing/
 docs/MODULARIZATION_PLAN.md
 
-# Corrupted/backup files
+# Backup/corrupted files
 *-corrupted.*
+*-backup.*
 
 # Temporary files
 *.tmp
 *.temp
+
+# IDE files
+.idea/
+*.swp
+*.swo

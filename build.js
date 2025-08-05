@@ -40,9 +40,9 @@ async function build() {
 
     // Copy static files
     copyFileSync('manifest.json', 'dist/manifest.json');
-    copyFileSync('icon-16.png', 'dist/icon-16.png');
-    copyFileSync('icon-48.png', 'dist/icon-48.png');
-    copyFileSync('icon-128.png', 'dist/icon-128.png');
+    copyFileSync('assets/icons/icon-16.png', 'dist/icon-16.png');
+    copyFileSync('assets/icons/icon-48.png', 'dist/icon-48.png');
+    copyFileSync('assets/icons/icon-128.png', 'dist/icon-128.png');
 
     // Create sidebar.html (instead of popup.html)
     const sidebarHtml = `<!doctype html>

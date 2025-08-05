@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ReadWise Pro - Advanced Reading Assistant",
+  "name": "FocusRead - Advanced Reading Assistant",
   "version": "2.0.0",
   "description": "Professional reading enhancement with text complexity analysis, focused reading modes, and productivity tracking. Built with WebRay-M.",
   "permissions": [
@@ -14,14 +14,14 @@
     "*://*/*"
   ],
   "action": {
-    "default_title": "ReadWise Pro - Click to open reading assistant"
+    "default_title": "FocusRead - Click to open reading assistant"
   },
   "commands": {
     "toggle_sidebar": {
       "suggested_key": {
         "default": "Alt+R"
       },
-      "description": "Toggle ReadWise Pro sidebar"
+      "description": "Toggle FocusRead sidebar"
     },
     "analyze_current_page": {
       "suggested_key": {
@@ -50,8 +50,8 @@
     "default_path": "sidebar.html"
   },
   "icons": {
-    "16": "icon-16.png",
-    "48": "icon-48.png",
-    "128": "icon-128.png"
+    "16": "assets/icons/icon-16.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
   }
 }
