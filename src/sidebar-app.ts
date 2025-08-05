@@ -1065,7 +1065,24 @@ export class SidebarApp extends LitElement {
           <div class="section">
             <div class="section-title">
               <span class="custom-icon">
-                <img src="../assets/icons/focus-helper.svg" alt="Focus Helper" width="20" height="20" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- Crosshair targeting circles -->
+                  <circle cx="12" cy="12" r="8" stroke="#065F46" stroke-width="1.5"/>
+                  <circle cx="12" cy="12" r="4" stroke="#FED7AA" stroke-width="1.5" fill="#FED7AA" fill-opacity="0.2"/>
+                  <circle cx="12" cy="12" r="1.5" fill="#065F46"/>
+                  
+                  <!-- Crosshair lines -->
+                  <path d="M12 4v4" stroke="#065F46" stroke-width="1.5"/>
+                  <path d="M12 16v4" stroke="#065F46" stroke-width="1.5"/>
+                  <path d="M4 12h4" stroke="#065F46" stroke-width="1.5"/>
+                  <path d="M16 12h4" stroke="#065F46" stroke-width="1.5"/>
+                  
+                  <!-- Corner brackets for focus frame -->
+                  <path d="M6 6L8 6L8 8" stroke="#FED7AA" stroke-width="1"/>
+                  <path d="M18 6L16 6L16 8" stroke="#FED7AA" stroke-width="1"/>
+                  <path d="M6 18L8 18L8 16" stroke="#FED7AA" stroke-width="1"/>
+                  <path d="M18 18L16 18L16 16" stroke="#FED7AA" stroke-width="1"/>
+                </svg>
               </span>
               Focus Helper
             </div>
@@ -1097,7 +1114,25 @@ export class SidebarApp extends LitElement {
           <div class="speed-section">
             <div class="section-title">
               <span class="custom-icon">
-                <img src="../assets/icons/reading-rhythm.svg" alt="Reading Rhythm" width="20" height="20" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- Speed gauge arc -->
+                  <path d="M3 12a9 9 0 0 1 18 0" stroke="#065F46" stroke-width="2" fill="none"/>
+                  
+                  <!-- Speed indicator needle -->
+                  <path d="M12 12L16.5 7.5" stroke="#FED7AA" stroke-width="2.5" stroke-linecap="round"/>
+                  
+                  <!-- Center dot -->
+                  <circle cx="12" cy="12" r="1.5" fill="#065F46"/>
+                  
+                  <!-- Speed marks -->
+                  <circle cx="7" cy="10" r="1" fill="#FED7AA"/>
+                  <circle cx="12" cy="8" r="1" fill="#065F46"/>
+                  <circle cx="17" cy="10" r="1" fill="#FED7AA"/>
+                  
+                  <!-- Rhythm waves -->
+                  <path d="M4 16c2-1 4 1 6 0s4-1 6 0 4 1 4 0" stroke="#FED7AA" stroke-width="1.5" opacity="0.6"/>
+                  <path d="M6 18c1.5-0.5 3 0.5 4.5 0s3-0.5 4.5 0 3 0.5 3 0" stroke="#065F46" stroke-width="1" opacity="0.4"/>
+                </svg>
               </span>
               My Reading Rhythm
             </div>
@@ -1125,7 +1160,24 @@ export class SidebarApp extends LitElement {
           <div class="section">
             <div class="section-title">
               <span class="custom-icon">
-                <img src="../assets/icons/reading-journey.svg" alt="Reading Journey" width="20" height="20" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- Journey path -->
+                  <path d="M4 8c4 0 6 2 8 2s4-2 8-2" stroke="#065F46" stroke-width="1.5"/>
+                  <path d="M4 12c4 0 6 2 8 2s4-2 8-2" stroke="#FED7AA" stroke-width="1.5" opacity="0.7"/>
+                  <path d="M4 16c4 0 6 2 8 2s4-2 8-2" stroke="#065F46" stroke-width="1.5" opacity="0.5"/>
+                  
+                  <!-- Journey milestones -->
+                  <circle cx="6" cy="8" r="1.5" fill="#065F46"/>
+                  <circle cx="12" cy="10" r="1.5" fill="#FED7AA"/>
+                  <circle cx="18" cy="8" r="1.5" fill="#065F46" opacity="0.7"/>
+                  
+                  <!-- Current position indicator (larger) -->
+                  <circle cx="12" cy="14" r="2.5" fill="none" stroke="#FED7AA" stroke-width="1.5"/>
+                  <circle cx="12" cy="14" r="1" fill="#FED7AA"/>
+                  
+                  <!-- Progress checkmark -->
+                  <path d="M10 14l1.5 1.5L14 13" stroke="#065F46" stroke-width="1.5" fill="none"/>
+                </svg>
               </span>
               Your Reading Journey
             </div>
