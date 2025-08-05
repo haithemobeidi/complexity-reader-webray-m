@@ -43,12 +43,13 @@ export class SidebarApp extends LitElement {
       font-family: Charter, Georgia, serif;
       background: linear-gradient(135deg, #F7F3E9 0%, #FFF8F0 100%);
       color: #2D4A22;
+      overflow-y: auto;
     }
     
     .reading-assistant {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      min-height: 100vh;
       gap: 16px;
     }
     
@@ -88,59 +89,56 @@ export class SidebarApp extends LitElement {
     /* Motivational Quote Section */
     .quote-section {
       background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%);
-      border-radius: 12px;
-      padding: 16px;
-      margin: 16px;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin: 20px;
       box-shadow: 0 2px 8px rgba(253, 186, 116, 0.2);
     }
     
     .quote-text {
       font-style: italic;
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 13px;
+      line-height: 1.4;
       color: #7C2D12;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
     .quote-author {
-      font-size: 12px;
+      font-size: 11px;
       color: #9A3412;
       text-align: right;
       font-weight: 600;
     }
     
-    /* Call to Action */
-    .cta-section {
-      background: linear-gradient(135deg, #FED7AA 0%, #FDE68A 100%);
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin: 0 16px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(254, 215, 170, 0.3);
-    }
-    
-    .cta-text {
-      font-size: 14px;
+    .welcome-message {
+      background: linear-gradient(135deg, #FED7AA 0%, #FECACA 100%);
       color: #065F46;
-      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      text-align: center;
+      font-family: Inter, sans-serif;
     }
     
     .main-content {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      padding: 24px 20px;
+      gap: 20px;
+      padding: 20px;
     }
     
     .analysis-card {
       background: #FFFFFF;
       border: 2px solid #FED7AA;
       border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(254, 215, 170, 0.2);
       position: relative;
       overflow: hidden;
+      margin-bottom: 4px;
     }
     
     .analysis-card::before {
@@ -154,9 +152,9 @@ export class SidebarApp extends LitElement {
     }
     
     .page-title {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       line-height: 1.4;
       color: #065F46;
       font-family: Charter, Georgia, serif;
@@ -172,13 +170,13 @@ export class SidebarApp extends LitElement {
     .complexity-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 25px;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 20px;
       font-family: Inter, sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       border: 2px solid;
     }
     
@@ -194,13 +192,13 @@ export class SidebarApp extends LitElement {
     }
     .complexity-pill.moderate { 
       background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-      color: #92400E;
+      color: #B45309;
       border-color: #F59E0B;
     }
     .complexity-pill.complex { 
-      background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%);
-      color: #EA580C;
-      border-color: #F97316;
+      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+      color: #B91C1C;
+      border-color: #FCA5A5;
     }
     .complexity-pill.very { 
       background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
@@ -223,21 +221,21 @@ export class SidebarApp extends LitElement {
     .reading-metrics {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-top: 20px;
+      gap: 12px;
+      margin-top: 16px;
     }
     
     .metric-card {
       background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
       border: 2px solid #BBF7D0;
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 12px 8px;
       text-align: center;
     }
     
     .metric-value {
       font-family: 'SF Mono', 'Monaco', monospace;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
       color: #065F46;
       display: block;
@@ -246,10 +244,12 @@ export class SidebarApp extends LitElement {
     
     .metric-label {
       font-family: Inter, sans-serif;
-      font-size: 12px;
+      font-size: 11px;
       color: #047857;
-      margin-top: 6px;
+      margin-top: 4px;
       font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     
     .empty-state {
@@ -271,19 +271,19 @@ export class SidebarApp extends LitElement {
     .section {
       background: #FFFFFF;
       border-radius: 20px;
-      padding: 24px;
+      padding: 20px;
       border: 2px solid #FED7AA;
-      box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+      box-shadow: 0 6px 20px rgba(254, 215, 170, 0.2);
     }
     
     .section-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       color: #065F46;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-family: Charter, Georgia, serif;
     }
     
@@ -348,17 +348,17 @@ export class SidebarApp extends LitElement {
     .speed-section {
       background: #FFFFFF;
       border-radius: 20px;
-      padding: 24px;
+      padding: 20px;
       border: 2px solid #FED7AA;
-      box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+      box-shadow: 0 6px 20px rgba(254, 215, 170, 0.2);
     }
     
     .speed-control {
       background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
       border: 2px solid #BBF7D0;
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 16px;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
     }
     
     .speed-slider-container {
@@ -581,11 +581,18 @@ export class SidebarApp extends LitElement {
         
         if (response?.success) {
           this.blurModeActive = false;
-          this.message = '👁️ Focus mode deactivated';
+          this.message = '✨ Peaceful reading space deactivated';
+          this.stopBlurModePolling();
         } else {
           this.message = '❌ Failed to stop focus mode: ' + (response?.error || 'Unknown error');
         }
       } else {
+        // Auto-start reading session if not active
+        if (!this.sessionStartTime) {
+          console.log('🚀 Auto-starting reading session for peaceful reading space...');
+          await this.startSession();
+        }
+        
         // Start blur mode
         const response = await chrome.runtime.sendMessage({
           action: 'start_blur_mode'
@@ -593,7 +600,8 @@ export class SidebarApp extends LitElement {
         
         if (response?.success) {
           this.blurModeActive = true;
-          this.message = '👁️ Focus mode activated';
+          this.message = '✨ Peaceful reading space activated' + (this.sessionStartTime ? ' (tracking your progress)' : '');
+          this.startBlurModePolling();
         } else {
           this.message = '❌ Failed to start focus mode: ' + (response?.error || 'Unknown error');
         }
@@ -878,6 +886,31 @@ export class SidebarApp extends LitElement {
     return messages[score.toLowerCase() as keyof typeof messages] || 'Ready for this reading adventure! 📚';
   }
 
+  private getSpecificGradeLevel(readabilityLevel: string): string {
+    // Convert generic levels to specific grades
+    const gradeMap: { [key: string]: string } = {
+      'Elementary level': 'Grade 3-5',
+      'Middle School level': 'Grade 6-8', 
+      'High School level': 'Grade 9-12',
+      'College level': 'College',
+      'Graduate level': 'Graduate',
+      'Professional level': 'Professional'
+    };
+    
+    // Extract number if it's like "Grade 14" and convert
+    const gradeMatch = readabilityLevel.match(/Grade (\d+)/);
+    if (gradeMatch) {
+      const grade = parseInt(gradeMatch[1]);
+      if (grade <= 5) return 'Grade 3-5';
+      if (grade <= 8) return 'Grade 6-8';
+      if (grade <= 12) return 'Grade 9-12';
+      if (grade <= 16) return 'College';
+      return 'Graduate';
+    }
+    
+    return gradeMap[readabilityLevel] || readabilityLevel;
+  }
+
   private getReadingTimeLabel(minutes: number): string {
     if (minutes <= 2) return '☕ Quick sip reading time';
     if (minutes <= 5) return '🫖 Cozy reading time';
@@ -899,12 +932,6 @@ export class SidebarApp extends LitElement {
           <div class="quote-author">— ${this.currentQuote.author}</div>
         </div>
 
-        <!-- Call to Action -->
-        ${this.currentAnalysis ? html`
-          <div class="cta-section">
-            <div class="cta-text">📚 Great choice! Let's dive into this article together</div>
-          </div>
-        ` : ''}
 
         <main class="main-content">
           ${this.currentAnalysis ? html`
@@ -916,18 +943,18 @@ export class SidebarApp extends LitElement {
               </div>
               
               <div class="complexity-pill ${this.currentAnalysis.complexity.complexityScore.toLowerCase()}">
-                <span class="complexity-emoji">📈</span>
-                ${this.currentAnalysis.complexity.complexityScore} • Grade ${this.currentAnalysis.complexity.readabilityLevel.split(' ')[0]} • ${this.getComplexityMessage(this.currentAnalysis.complexity.complexityScore)}
+                <span class="complexity-emoji">🧠</span>
+                ${this.currentAnalysis.complexity.complexityScore} • ${this.getSpecificGradeLevel(this.currentAnalysis.complexity.readabilityLevel)} • Take your time!
               </div>
               
               <div class="reading-metrics">
                 <div class="metric-card">
                   <span class="metric-value">${this.currentAnalysis.wordCount.toLocaleString()}</span>
-                  <div class="metric-label">WORDS TO EXPLORE</div>
+                  <div class="metric-label">Words to explore</div>
                 </div>
                 <div class="metric-card">
                   <span class="metric-value">${this.currentAnalysis.readingTime} min</span>
-                  <div class="metric-label">COZY READING TIME</div>
+                  <div class="metric-label">Cozy reading time</div>
                 </div>
               </div>
             </div>
@@ -962,7 +989,7 @@ export class SidebarApp extends LitElement {
               class="btn primary"
               ?disabled="${this.isAnalyzing}"
             >
-              ${this.isAnalyzing ? '🔍 Analyzing your content...' : '🔍 Analyze Page'}
+              ${this.isAnalyzing ? '🔍 Analyzing...' : '🔍 Analyze Page'}
             </button>
             
             <button 
@@ -970,11 +997,11 @@ export class SidebarApp extends LitElement {
               class="btn focus-btn ${this.blurModeActive ? 'active' : ''}"
               ?disabled="${!this.currentAnalysis || this.isAnalyzing}"
             >
-              ${this.blurModeActive ? '✅ Create peaceful reading space (ON)' : '🕯️ Create peaceful reading space'}
+              ${this.blurModeActive ? html`<span>✅</span><span>Peaceful mode active</span>` : html`<span>✨</span><span>Create peaceful reading space</span>`}
             </button>
             
-            <div style="font-size: 12px; color: #047857; font-style: italic; text-align: center; margin-top: 8px;">
-              ${this.blurModeActive ? '🧘‍♀️ Focus mode active - highlight important text and reduce distractions' : '💡 Highlight important text and reduce distractions'}
+            <div style="font-size: 12px; color: #6B7280; font-style: italic; text-align: center; margin-top: 12px; font-family: Inter, sans-serif;">
+              Highlight important text and reduce distractions
             </div>
           </div>
 
@@ -992,7 +1019,7 @@ export class SidebarApp extends LitElement {
                   <path d="M19 13l2 1-2 1" stroke="#065F46" stroke-width="1.5"/>
                 </svg>
               </span>
-              📖 My Reading Rhythm
+              My Reading Rhythm
             </div>
             <div class="speed-control">
               <div class="speed-slider-container">
@@ -1045,20 +1072,22 @@ export class SidebarApp extends LitElement {
                 <div class="session-stats">
                   <div class="session-stat">
                     <span class="session-stat-value">${this.totalWordsRead.toLocaleString()}</span>
-                    <span class="session-stat-label">Words explored</span>
+                    <span class="session-stat-label">${this.blurModeActive ? 'Words discovered' : 'Words explored'}</span>
                   </div>
                   <div class="session-stat">
                     <span class="session-stat-value">${this.pagesAnalyzed}</span>
-                    <span class="session-stat-label">Articles read</span>
+                    <span class="session-stat-label">Articles enjoyed</span>
                   </div>
                 </div>
                 
                 ${this.blurModeActive && this.blurModeState.totalWords > 0 ? html`
-                  <div style="background: rgba(255,255,255,0.9); padding: 8px; border-radius: 8px; text-align: center; margin-bottom: 12px;">
-                    <div style="font-size: 12px; color: #047857; margin-bottom: 4px;">🎯 Focus Mode Progress</div>
-                    <div style="font-size: 14px; font-weight: 700; color: #065F46;">
-                      ${this.blurModeState.wordsRevealed}/${this.blurModeState.totalWords} words 
-                      (${Math.round((this.blurModeState.wordsRevealed / this.blurModeState.totalWords) * 100)}%)
+                  <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 2px solid #F59E0B; padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 12px;">
+                    <div style="font-size: 12px; color: #92400E; margin-bottom: 4px; font-weight: 600;">✨ Peaceful Reading Progress</div>
+                    <div style="font-size: 16px; font-weight: 700; color: #92400E; margin-bottom: 4px;">
+                      ${this.blurModeState.wordsRevealed}/${this.blurModeState.totalWords} words discovered
+                    </div>
+                    <div style="font-size: 12px; color: #A16207;">
+                      ${Math.round((this.blurModeState.wordsRevealed / this.blurModeState.totalWords) * 100)}% focus level
                     </div>
                   </div>
                 ` : ''}
