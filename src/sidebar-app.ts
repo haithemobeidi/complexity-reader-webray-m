@@ -3,8 +3,8 @@ import { customElement, state } from 'lit/decorators.js';
 import './components/BlurModeControls';
 import type { BlurModeState } from './components/BlurModeControls';
 
-// Motivational quotes from famous authors
-const READING_QUOTES = [
+// Fallback quotes in case API fails
+const FALLBACK_READING_QUOTES = [
   { text: "A reader lives a thousand lives before he dies. The man who never reads lives only one.", author: "George R.R. Martin" },
   { text: "The more that you read, the more things you will know. The more that you learn, the more places you'll go.", author: "Dr. Seuss" },
   { text: "Reading is to the mind what exercise is to the body.", author: "Joseph Addison" },
@@ -33,7 +33,7 @@ export class SidebarApp extends LitElement {
   @state() private totalWordsRead = 0;
   @state() private pagesAnalyzed = 0;
   @state() private message = '';
-  @state() private currentQuote = READING_QUOTES[Math.floor(Math.random() * READING_QUOTES.length)];
+  @state() private currentQuote = FALLBACK_READING_QUOTES[Math.floor(Math.random() * FALLBACK_READING_QUOTES.length)];
 
   static styles = css`
     :host {
@@ -50,13 +50,13 @@ export class SidebarApp extends LitElement {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      gap: 16px;
+      gap: 8px;
     }
     
     .header {
       background: linear-gradient(135deg, #065F46 0%, #047857 100%);
       color: #F7F3E9;
-      padding: 20px 16px;
+      padding: 16px;
       text-align: center;
       position: relative;
       border-radius: 0 0 16px 16px;
@@ -90,8 +90,8 @@ export class SidebarApp extends LitElement {
     .quote-section {
       background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%);
       border-radius: 16px;
-      padding: 16px 20px;
-      margin: 20px;
+      padding: 12px 16px;
+      margin: 12px 16px;
       box-shadow: 0 2px 8px rgba(253, 186, 116, 0.2);
     }
     
@@ -126,8 +126,8 @@ export class SidebarApp extends LitElement {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      padding: 20px;
+      gap: 16px;
+      padding: 16px;
     }
     
     .analysis-card {
@@ -290,7 +290,7 @@ export class SidebarApp extends LitElement {
     .controls {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
     
     .btn {
@@ -507,6 +507,9 @@ export class SidebarApp extends LitElement {
     super.connectedCallback();
     this.requestUpdate();
     
+    // Load a fresh inspirational quote
+    await this.loadRandomQuote();
+    
     // Auto-analyze the current page when sidebar opens
     console.log('🚀 ReadWise Pro sidebar opened - starting auto-analysis...');
     await this.analyzeCurrentPage();
@@ -523,6 +526,30 @@ export class SidebarApp extends LitElement {
     this.addEventListener('blur-mode-pause', this.handleBlurModePause.bind(this));
     this.addEventListener('blur-mode-resume', this.handleBlurModeResume.bind(this));
     this.addEventListener('blur-mode-speed-change', this.handleBlurModeSpeedChange.bind(this));
+  }
+
+  /**
+   * Load a random inspirational quote from ZenQuotes API
+   */
+  private async loadRandomQuote() {
+    try {
+      const response = await fetch('https://zenquotes.io/api/random');
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0) {
+          this.currentQuote = {
+            text: data[0].q,
+            author: data[0].a
+          };
+          console.log('📚 Loaded fresh inspirational quote:', this.currentQuote.author);
+        }
+      } else {
+        console.log('📚 Using fallback quote - API unavailable');
+      }
+    } catch (error) {
+      console.log('📚 Using fallback quote - fetch failed:', error);
+      // Fallback is already set in initialization
+    }
   }
 
   private async analyzeCurrentPage() {
@@ -984,21 +1011,23 @@ export class SidebarApp extends LitElement {
               Focus Helper
             </div>
             
-            <button 
-              @click="${this.analyzeCurrentPage}" 
-              class="btn primary"
-              ?disabled="${this.isAnalyzing}"
-            >
-              ${this.isAnalyzing ? '🔍 Analyzing...' : '🔍 Analyze Page'}
-            </button>
-            
-            <button 
-              @click="${this.toggleBlurMode}" 
-              class="btn focus-btn ${this.blurModeActive ? 'active' : ''}"
-              ?disabled="${!this.currentAnalysis || this.isAnalyzing}"
-            >
-              ${this.blurModeActive ? html`<span>✅</span><span>Peaceful mode active</span>` : html`<span>✨</span><span>Create peaceful reading space</span>`}
-            </button>
+            <div class="controls">
+              <button 
+                @click="${this.analyzeCurrentPage}" 
+                class="btn primary"
+                ?disabled="${this.isAnalyzing}"
+              >
+                ${this.isAnalyzing ? '🔍 Analyzing...' : '🔍 Analyze Page'}
+              </button>
+              
+              <button 
+                @click="${this.toggleBlurMode}" 
+                class="btn focus-btn ${this.blurModeActive ? 'active' : ''}"
+                ?disabled="${!this.currentAnalysis || this.isAnalyzing}"
+              >
+                ${this.blurModeActive ? html`<span>✅</span><span>Peaceful mode active</span>` : html`<span>✨</span><span>Create peaceful reading space</span>`}
+              </button>
+            </div>
             
             <div style="font-size: 12px; color: #6B7280; font-style: italic; text-align: center; margin-top: 12px; font-family: Inter, sans-serif;">
               Highlight important text and reduce distractions
