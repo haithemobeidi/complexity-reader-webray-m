@@ -204,6 +204,10 @@ export class SidebarApp extends LitElement {
   async connectedCallback() {
     super.connectedCallback();
     this.requestUpdate();
+    
+    // Auto-analyze the current page when sidebar opens
+    console.log('🚀 ReadWise Pro sidebar opened - starting auto-analysis...');
+    await this.analyzeCurrentPage();
   }
 
   private async analyzeCurrentPage() {
@@ -258,10 +262,16 @@ export class SidebarApp extends LitElement {
   }
 
   private getSessionDuration(): string {
-    if (!this.sessionStartTime) return '0m';
+    if (!this.sessionStartTime) return '0s';
     
-    const minutes = Math.floor((Date.now() - this.sessionStartTime) / 60000);
-    return `${minutes}m`;
+    const totalSeconds = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    }
+    return `${seconds}s`;
   }
 
   private updateReadingSpeed(e: Event) {
@@ -299,7 +309,7 @@ export class SidebarApp extends LitElement {
           ` : html`
             <div class="empty-state">
               <div class="icon">📖</div>
-              <div>Navigate to an article to analyze reading complexity</div>
+              <div>${this.isAnalyzing ? 'Analyzing page...' : 'No readable content found on this page'}</div>
             </div>
           `}
 
@@ -309,7 +319,7 @@ export class SidebarApp extends LitElement {
               class="btn primary"
               ?disabled="${this.isAnalyzing}"
             >
-              ${this.isAnalyzing ? '⏳ Analyzing...' : '🔍 Analyze Page'}
+              ${this.isAnalyzing ? '⏳ Analyzing...' : '🔄 Refresh Analysis'}
             </button>
 
             <button 
