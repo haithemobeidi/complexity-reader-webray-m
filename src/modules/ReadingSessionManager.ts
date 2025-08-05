@@ -334,7 +334,9 @@ export class ReadingSessionManager {
     if (!this.storageManager) return [];
     
     try {
-      return await this.storageManager.get('reading_sessions') || [];
+      const result = await this.storageManager.get('reading_sessions', []);
+      // Ensure we always return an array
+      return Array.isArray(result.data) ? result.data : [];
     } catch (error) {
       console.error('Failed to load sessions:', error);
       return [];

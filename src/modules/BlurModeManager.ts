@@ -66,27 +66,40 @@ export class BlurModeManager {
 
   /**
    * Start blur mode on the current page
-   * Extracts content, wraps words, and begins progressive revelation
+   * Can use pre-extracted content from TextAnalysisEngine for consistency
    */
-  async startBlurMode(targetElement?: HTMLElement): Promise<boolean> {
+  async startBlurMode(targetElement?: HTMLElement, preExtractedContent?: string): Promise<boolean> {
     try {
       console.log('🎯 Starting BlurMode...');
       
-      // Find content container
-      this.contentContainer = targetElement || this.findMainContent();
-      if (!this.contentContainer) {
-        console.error('❌ No suitable content found for blur mode');
-        return false;
-      }
-
-      // Store original content for restoration
-      this.originalContent = this.contentContainer.innerHTML;
+      let wordCount = 0;
       
-      // Process and wrap words
-      const wordCount = this.processTextContent();
-      if (wordCount === 0) {
-        console.error('❌ No words found to process');
-        return false;
+      if (preExtractedContent) {
+        // Use pre-extracted content from TextAnalysisEngine for consistency
+        console.log('📄 Using pre-extracted content from analysis engine');
+        wordCount = this.processPreExtractedContent(preExtractedContent);
+        if (wordCount === 0) {
+          console.error('❌ No words found in pre-extracted content');
+          return false;
+        }
+      } else {
+        // Fallback to finding content in DOM (legacy behavior)
+        console.log('🔍 Finding content in DOM (fallback mode)');
+        this.contentContainer = targetElement || this.findMainContent();
+        if (!this.contentContainer) {
+          console.error('❌ No suitable content found for blur mode');
+          return false;
+        }
+
+        // Store original content for restoration
+        this.originalContent = this.contentContainer.innerHTML;
+        
+        // Process and wrap words
+        wordCount = this.processTextContent();
+        if (wordCount === 0) {
+          console.error('❌ No words found to process');
+          return false;
+        }
       }
 
       // Initialize state
@@ -136,8 +149,12 @@ export class BlurModeManager {
       this.keyboardListener = null;
     }
 
+    // Remove focus mode styling
+    this.removeFocusMode();
+
     // Restore original content
     if (this.contentContainer && this.originalContent) {
+      console.log('🔄 Restoring original DOM content');
       this.contentContainer.innerHTML = this.originalContent;
     }
 
@@ -260,9 +277,286 @@ export class BlurModeManager {
   }
 
   /**
+   * Process pre-extracted content for blur mode
+   * Finds the actual content on the page and blurs it in place
+   */
+  private processPreExtractedContent(extractedText: string): number {
+    console.log('📝 Processing pre-extracted content for in-place blurring:', {
+      contentLength: extractedText.length,
+      wordEstimate: extractedText.trim().split(/\s+/).length
+    });
+
+    // Find the article element on the page that matches the extracted content
+    const extractedWords = extractedText.trim().split(/\s+/).slice(0, 10).join(' '); // First 10 words
+    this.contentContainer = this.findArticleElement('', extractedText);
+    
+    if (!this.contentContainer) {
+      console.warn('⚠️ Could not find matching article element, falling back');
+      return this.findAndBlurContent(extractedText);
+    }
+
+    console.log('✅ Found article element:', this.contentContainer.tagName, this.contentContainer.className);
+    
+    // Store original content for restoration
+    this.originalContent = this.contentContainer.innerHTML;
+    
+    // Add focus styling to the page
+    this.addFocusMode();
+    
+    // Process the content in place
+    return this.processTextInContainer();
+  }
+
+  /**
+   * Find and blur content using fallback selectors
+   */
+  private findAndBlurContent(extractedText: string): number {
+    this.contentContainer = this.findMainContent();
+    if (!this.contentContainer) {
+      console.error('❌ No content container found');
+      return 0;
+    }
+
+    this.originalContent = this.contentContainer.innerHTML;
+    this.addFocusMode();
+    return this.processTextInContainer();
+  }
+
+  /**
+   * Find the article element on the page that matches the extracted content
+   */
+  private findArticleElement(title: string, extractedText: string): HTMLElement | null {
+    const extractedWords = extractedText.trim().split(/\s+/).slice(0, 20).join(' '); // First 20 words
+    
+    // Try various article selectors
+    const selectors = [
+      'article',
+      'main',
+      '[role="main"]',
+      '.article-content',
+      '.post-content',
+      '.entry-content',
+      '.content',
+      '.story-body',
+      'div[id*="content"]',
+      'div[class*="content"]'
+    ];
+
+    for (const selector of selectors) {
+      const elements = document.querySelectorAll(selector);
+      for (const element of elements) {
+        const elementText = (element as HTMLElement).textContent || '';
+        
+        // Check if this element contains the extracted content
+        if (elementText.includes(title) || elementText.includes(extractedWords.substring(0, 100))) {
+          console.log(`🎯 Found matching element with selector: ${selector}`);
+          return element as HTMLElement;
+        }
+      }
+    }
+
+    // Fallback: find element with the most matching text
+    const allElements = document.querySelectorAll('div, article, section, main');
+    let bestMatch: HTMLElement | null = null;
+    let bestScore = 0;
+
+    for (const element of allElements) {
+      const elementText = (element as HTMLElement).textContent || '';
+      if (elementText.length < 100) continue; // Skip small elements
+      
+      // Simple matching score
+      const words = extractedWords.split(' ');
+      let matchScore = 0;
+      for (const word of words) {
+        if (word.length > 3 && elementText.includes(word)) {
+          matchScore++;
+        }
+      }
+      
+      if (matchScore > bestScore) {
+        bestScore = matchScore;
+        bestMatch = element as HTMLElement;
+      }
+    }
+
+    return bestMatch;
+  }
+
+  /**
+   * Add focus mode styling to dim non-article content
+   */
+  private addFocusMode(): void {
+    console.log('🎨 Adding focus mode styling');
+    
+    // Hide ads and distracting elements
+    this.hideAdsAndDistractions();
+    
+    // Create overlay to dim the page
+    const overlay = document.createElement('div');
+    overlay.id = 'readwise-focus-overlay';
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(2px);
+      z-index: 999998;
+      pointer-events: none;
+    `;
+    document.body.appendChild(overlay);
+
+    // Highlight the article content with wider reading area
+    if (this.contentContainer) {
+      this.contentContainer.style.position = 'relative';
+      this.contentContainer.style.zIndex = '999999';
+      this.contentContainer.style.background = 'white';
+      this.contentContainer.style.padding = '40px';
+      this.contentContainer.style.borderRadius = '12px';
+      this.contentContainer.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.12)';
+      this.contentContainer.style.maxWidth = '900px'; // Wider reading area
+      this.contentContainer.style.width = '90vw'; // Responsive width
+      this.contentContainer.style.margin = '20px auto';
+      this.contentContainer.style.fontSize = '18px'; // Larger, more readable text
+      this.contentContainer.style.lineHeight = '1.7'; // Better line spacing
+    }
+  }
+
+  /**
+   * Hide ads and distracting elements during focus mode
+   */
+  private hideAdsAndDistractions(): void {
+    console.log('🚫 Hiding ads and distractions');
+    
+    // Common ad selectors
+    const adSelectors = [
+      // Generic ad classes
+      '[class*="ad-"]', '[class*="ads-"]', '[class*="advertisement"]',
+      '[id*="ad-"]', '[id*="ads-"]', '[id*="advertisement"]',
+      
+      // Specific ad networks
+      '.GoogleActiveViewClass', '.adsbygoogle', 
+      '[data-ad-client]', '[data-ad-slot]', 
+      
+      // Social media widgets
+      '.twitter-tweet', '.fb-post', '.instagram-media',
+      
+      // Newsletter signups
+      '[class*="newsletter"]', '[class*="signup"]', '[class*="subscribe"]',
+      
+      // Sidebar content
+      'aside', '.sidebar', '.side-content',
+      
+      // Navigation and menus (but keep main nav)
+      '.secondary-nav', '.sub-nav', '.breadcrumb',
+      
+      // Comments sections
+      '[class*="comment"]', '[id*="comment"]',
+      
+      // Related articles/recommended content
+      '[class*="related"]', '[class*="recommended"]', '[class*="suggested"]',
+      
+      // Share buttons and social
+      '[class*="share"]', '[class*="social"]',
+      
+      // Cookie banners and popups
+      '[class*="cookie"]', '[class*="banner"]', '[class*="popup"]',
+      
+      // Footer content
+      'footer:not(.article-footer)',
+      
+      // Amazon affiliate boxes
+      '[class*="amazon"]', '[data-amazon]',
+      
+      // Generic promotional content
+      '[class*="promo"]', '[class*="promotion"]', '[class*="sponsor"]'
+    ];
+
+    const hiddenElements: HTMLElement[] = [];
+    
+    adSelectors.forEach(selector => {
+      try {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+          const htmlElement = element as HTMLElement;
+          if (htmlElement.style.display !== 'none') {
+            htmlElement.dataset.readwiseHidden = htmlElement.style.display || 'block';
+            htmlElement.style.display = 'none';
+            hiddenElements.push(htmlElement);
+          }
+        });
+      } catch (error) {
+        // Skip invalid selectors
+      }
+    });
+
+    // Store hidden elements for restoration
+    (window as any).readwiseHiddenElements = hiddenElements;
+    
+    console.log(`🚫 Hidden ${hiddenElements.length} distracting elements`);
+  }
+
+  /**
+   * Restore hidden ads and distractions
+   */
+  private restoreAdsAndDistractions(): void {
+    console.log('🔄 Restoring hidden elements');
+    
+    const hiddenElements = (window as any).readwiseHiddenElements || [];
+    
+    hiddenElements.forEach((element: HTMLElement) => {
+      const originalDisplay = element.dataset.readwiseHidden || 'block';
+      element.style.display = originalDisplay;
+      delete element.dataset.readwiseHidden;
+    });
+    
+    delete (window as any).readwiseHiddenElements;
+    console.log(`🔄 Restored ${hiddenElements.length} elements`);
+  }
+
+  /**
+   * Remove focus mode styling
+   */
+  private removeFocusMode(): void {
+    console.log('🎨 Removing focus mode styling');
+    
+    // Restore hidden ads and distractions
+    this.restoreAdsAndDistractions();
+    
+    // Remove overlay
+    const overlay = document.getElementById('readwise-focus-overlay');
+    if (overlay) {
+      overlay.remove();
+    }
+
+    // Restore article styling
+    if (this.contentContainer) {
+      this.contentContainer.style.position = '';
+      this.contentContainer.style.zIndex = '';
+      this.contentContainer.style.background = '';
+      this.contentContainer.style.padding = '';
+      this.contentContainer.style.borderRadius = '';
+      this.contentContainer.style.boxShadow = '';
+      this.contentContainer.style.maxWidth = '';
+      this.contentContainer.style.width = '';
+      this.contentContainer.style.margin = '';
+      this.contentContainer.style.fontSize = '';
+      this.contentContainer.style.lineHeight = '';
+    }
+  }
+
+  /**
    * Process text content and wrap individual words in spans
    */
   private processTextContent(): number {
+    return this.processTextInContainer();
+  }
+
+  /**
+   * Core text processing logic - wraps words in spans for revelation
+   */
+  private processTextInContainer(): number {
     if (!this.contentContainer) return 0;
 
     const walker = document.createTreeWalker(

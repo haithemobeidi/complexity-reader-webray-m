@@ -1,11 +1,21 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import './components/BlurModeControls';
+import type { BlurModeState } from './components/BlurModeControls';
 
 @customElement('sidebar-app')
 export class SidebarApp extends LitElement {
   @state() private currentAnalysis: any = null;
   @state() private isAnalyzing = false;
   @state() private blurModeActive = false;
+  @state() private blurModeState: BlurModeState = {
+    isActive: false,
+    isPaused: false,
+    wordsRevealed: 0,
+    totalWords: 0,
+    currentWPM: 0,
+    timeElapsed: 0
+  };
   @state() private readingSpeedWPM = 225;
   @state() private sessionStartTime: number | null = null;
   @state() private totalWordsRead = 0;
@@ -208,6 +218,19 @@ export class SidebarApp extends LitElement {
     // Auto-analyze the current page when sidebar opens
     console.log('🚀 ReadWise Pro sidebar opened - starting auto-analysis...');
     await this.analyzeCurrentPage();
+    
+    // Sync blur mode status with backend
+    await this.syncBlurModeStatus();
+    
+    // Sync session status with backend
+    await this.syncSessionStatus();
+    
+    // Set up blur mode control event listeners
+    this.addEventListener('blur-mode-start', this.handleBlurModeStart.bind(this));
+    this.addEventListener('blur-mode-stop', this.handleBlurModeStop.bind(this));
+    this.addEventListener('blur-mode-pause', this.handleBlurModePause.bind(this));
+    this.addEventListener('blur-mode-resume', this.handleBlurModeResume.bind(this));
+    this.addEventListener('blur-mode-speed-change', this.handleBlurModeSpeedChange.bind(this));
   }
 
   private async analyzeCurrentPage() {
@@ -225,8 +248,25 @@ export class SidebarApp extends LitElement {
         this.message = '✅ Page analyzed successfully!';
         
         if (this.sessionStartTime && this.currentAnalysis) {
-          this.totalWordsRead += this.currentAnalysis.wordCount;
+          // Only add to word count if not using blur mode (blur mode tracks words revealed)
+          if (!this.blurModeActive) {
+            this.totalWordsRead += this.currentAnalysis.wordCount;
+          }
           this.pagesAnalyzed += 1;
+          
+          // Update session with page complexity information
+          try {
+            await chrome.runtime.sendMessage({
+              action: 'update_session_progress',
+              update: {
+                pagesAnalyzed: this.pagesAnalyzed,
+                avgComplexity: this.currentAnalysis.complexity.complexityScore,
+                wordsRead: this.blurModeActive ? this.totalWordsRead : this.totalWordsRead
+              }
+            });
+          } catch (error) {
+            console.error('Failed to update session progress:', error);
+          }
         }
       } else {
         this.message = '❌ ' + (response?.error || 'Analysis failed');
@@ -239,25 +279,78 @@ export class SidebarApp extends LitElement {
     }
   }
 
-  private toggleBlurMode() {
-    this.blurModeActive = !this.blurModeActive;
-    this.message = this.blurModeActive ? 
-      '👁️ Focus mode activated' : 
-      '👁️ Focus mode deactivated';
+  private async toggleBlurMode() {
+    try {
+      if (this.blurModeActive) {
+        // Stop blur mode
+        const response = await chrome.runtime.sendMessage({
+          action: 'stop_blur_mode'
+        });
+        
+        if (response?.success) {
+          this.blurModeActive = false;
+          this.message = '👁️ Focus mode deactivated';
+        } else {
+          this.message = '❌ Failed to stop focus mode: ' + (response?.error || 'Unknown error');
+        }
+      } else {
+        // Start blur mode
+        const response = await chrome.runtime.sendMessage({
+          action: 'start_blur_mode'
+        });
+        
+        if (response?.success) {
+          this.blurModeActive = true;
+          this.message = '👁️ Focus mode activated';
+        } else {
+          this.message = '❌ Failed to start focus mode: ' + (response?.error || 'Unknown error');
+        }
+      }
+    } catch (error) {
+      console.error('Blur mode toggle error:', error);
+      this.message = '❌ Failed to toggle focus mode';
+    }
   }
 
-  private startSession() {
-    this.sessionStartTime = Date.now();
-    this.totalWordsRead = 0;
-    this.pagesAnalyzed = 0;
-    this.message = '🚀 Reading session started!';
+  private async startSession() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'start_reading_session',
+        targetWPM: this.readingSpeedWPM
+      });
+      
+      if (response?.success) {
+        this.sessionStartTime = Date.now();
+        this.totalWordsRead = 0;
+        this.pagesAnalyzed = 0;
+        this.message = '🚀 Reading session started!';
+      } else {
+        this.message = '❌ Failed to start session: ' + (response?.error || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Session start error:', error);
+      this.message = '❌ Failed to start reading session';
+    }
   }
 
-  private endSession() {
+  private async endSession() {
     if (this.sessionStartTime) {
-      const duration = this.getSessionDuration();
-      this.message = `📊 Session ended! ${duration}, ${this.totalWordsRead.toLocaleString()} words`;
-      this.sessionStartTime = null;
+      try {
+        const response = await chrome.runtime.sendMessage({
+          action: 'end_reading_session'
+        });
+        
+        if (response?.success) {
+          const duration = this.getSessionDuration();
+          this.message = `📊 Session ended! ${duration}, ${this.totalWordsRead.toLocaleString()} words`;
+          this.sessionStartTime = null;
+        } else {
+          this.message = '❌ Failed to end session: ' + (response?.error || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Session end error:', error);
+        this.message = '❌ Failed to end reading session';
+      }
     }
   }
 
@@ -277,6 +370,209 @@ export class SidebarApp extends LitElement {
   private updateReadingSpeed(e: Event) {
     const target = e.target as HTMLInputElement;
     this.readingSpeedWPM = parseInt(target.value);
+  }
+
+  /**
+   * Sync blur mode status with backend on sidebar load
+   */
+  private async syncBlurModeStatus() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'get_blur_status'
+      });
+      
+      if (response?.success && response.stats) {
+        this.blurModeActive = response.stats.isActive || false;
+        console.log('🔄 Blur mode status synced:', this.blurModeActive);
+      }
+    } catch (error) {
+      console.error('Failed to sync blur mode status:', error);
+    }
+  }
+
+  /**
+   * Sync session status with backend on sidebar load
+   */
+  private async syncSessionStatus() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'get_session_status'
+      });
+      
+      if (response?.success && response.session) {
+        const session = response.session;
+        this.sessionStartTime = session.startTime;
+        // Note: In a real implementation, we'd sync more session data here
+        console.log('🔄 Session status synced:', !!session);
+      }
+    } catch (error) {
+      console.error('Failed to sync session status:', error);
+    }
+  }
+
+  /**
+   * Blur Mode Control Event Handlers - Modular approach
+   */
+  private async handleBlurModeStart(e: CustomEvent<{ wpm: number }>) {
+    try {
+      // If no reading session is active, start one automatically
+      if (!this.sessionStartTime) {
+        console.log('🚀 Auto-starting reading session for focus mode...');
+        await this.startSession();
+      }
+      
+      const response = await chrome.runtime.sendMessage({
+        action: 'start_blur_mode'
+      });
+      
+      if (response?.success) {
+        this.blurModeActive = true;
+        this.blurModeState = {
+          ...this.blurModeState,
+          isActive: true,
+          isPaused: false,
+          currentWPM: e.detail.wpm
+        };
+        this.message = '👁️ Focus mode activated' + (this.sessionStartTime ? ' (integrated with session)' : '');
+        
+        // Start polling for blur mode status updates
+        this.startBlurModePolling();
+      } else {
+        this.message = '❌ Failed to start focus mode: ' + (response?.error || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Blur mode start error:', error);
+      this.message = '❌ Failed to start focus mode';
+    }
+  }
+
+  private async handleBlurModeStop(e: CustomEvent<void>) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'stop_blur_mode'
+      });
+      
+      if (response?.success) {
+        this.blurModeActive = false;
+        this.blurModeState = {
+          ...this.blurModeState,
+          isActive: false,
+          isPaused: false
+        };
+        this.message = '👁️ Focus mode deactivated';
+        
+        // Stop polling
+        this.stopBlurModePolling();
+      } else {
+        this.message = '❌ Failed to stop focus mode: ' + (response?.error || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Blur mode stop error:', error);
+      this.message = '❌ Failed to stop focus mode';
+    }
+  }
+
+  private async handleBlurModePause(e: CustomEvent<void>) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'toggle_blur_pause'
+      });
+      
+      if (response?.success) {
+        this.blurModeState = {
+          ...this.blurModeState,
+          isPaused: true
+        };
+        this.message = '⏸️ Focus mode paused';
+      }
+    } catch (error) {
+      console.error('Blur mode pause error:', error);
+    }
+  }
+
+  private async handleBlurModeResume(e: CustomEvent<void>) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'toggle_blur_pause'
+      });
+      
+      if (response?.success) {
+        this.blurModeState = {
+          ...this.blurModeState,
+          isPaused: false
+        };
+        this.message = '▶️ Focus mode resumed';
+      }
+    } catch (error) {
+      console.error('Blur mode resume error:', error);
+    }
+  }
+
+  private async handleBlurModeSpeedChange(e: CustomEvent<{ wpm: number }>) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'adjust_blur_speed',
+        wpm: e.detail.wpm
+      });
+      
+      if (response?.success) {
+        this.blurModeState = {
+          ...this.blurModeState,
+          currentWPM: e.detail.wpm
+        };
+        this.message = `🎛️ Speed adjusted to ${e.detail.wpm} WPM`;
+      }
+    } catch (error) {
+      console.error('Blur mode speed change error:', error);
+    }
+  }
+
+  private blurModePollingInterval: number | null = null;
+
+  private startBlurModePolling() {
+    this.stopBlurModePolling(); // Clear any existing interval
+    
+    this.blurModePollingInterval = window.setInterval(async () => {
+      try {
+        const response = await chrome.runtime.sendMessage({
+          action: 'get_blur_status'
+        });
+        
+        if (response?.success && response.stats) {
+          this.blurModeState = {
+            isActive: response.stats.isActive,
+            isPaused: response.stats.isPaused,
+            wordsRevealed: response.stats.wordsRevealed,
+            totalWords: response.stats.totalWords,
+            currentWPM: response.stats.currentWPM,
+            timeElapsed: response.stats.timeElapsed
+          };
+          
+          // Sync active state with legacy property
+          this.blurModeActive = response.stats.isActive;
+          
+          // Update session progress if blur mode is active
+          if (response.stats.isActive && this.sessionStartTime) {
+            this.totalWordsRead = response.stats.wordsRevealed;
+          }
+          
+          // If blur mode ended, stop polling
+          if (!response.stats.isActive) {
+            this.stopBlurModePolling();
+          }
+        }
+      } catch (error) {
+        console.error('Blur mode polling error:', error);
+        this.stopBlurModePolling();
+      }
+    }, 1000); // Update every second
+  }
+
+  private stopBlurModePolling() {
+    if (this.blurModePollingInterval) {
+      clearInterval(this.blurModePollingInterval);
+      this.blurModePollingInterval = null;
+    }
   }
 
   render() {
@@ -322,15 +618,15 @@ export class SidebarApp extends LitElement {
               ${this.isAnalyzing ? '⏳ Analyzing...' : '🔄 Refresh Analysis'}
             </button>
 
-            <button 
-              @click="${this.toggleBlurMode}" 
-              class="btn ${this.blurModeActive ? 'active' : ''}"
-            >
-              👁️ Focus Mode ${this.blurModeActive ? '(ON)' : ''}
-            </button>
+            <!-- Modular Blur Mode Controls Component -->
+            <blur-mode-controls
+              .state="${this.blurModeState}"
+              .defaultWPM="${this.readingSpeedWPM}"
+              .disabled="${this.isAnalyzing}"
+            ></blur-mode-controls>
 
             <div class="speed-control">
-              <span>Reading Speed:</span>
+              <span>Global Reading Speed:</span>
               <input 
                 type="range" 
                 min="150" 
@@ -347,8 +643,20 @@ export class SidebarApp extends LitElement {
                 <div class="session-stats">
                   <span>Time: ${this.getSessionDuration()}</span>
                   <span>Words: ${this.totalWordsRead.toLocaleString()}</span>
-                  <span>Pages: ${this.pagesAnalyzed}</span>
+                  ${this.blurModeActive ? html`
+                    <span style="color: #2e7d32; font-weight: 600;">
+                      📖 Focus Mode Active
+                    </span>
+                  ` : html`
+                    <span>Pages: ${this.pagesAnalyzed}</span>
+                  `}
                 </div>
+                ${this.blurModeActive && this.blurModeState.totalWords > 0 ? html`
+                  <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
+                    Progress: ${this.blurModeState.wordsRevealed}/${this.blurModeState.totalWords} words 
+                    (${Math.round((this.blurModeState.wordsRevealed / this.blurModeState.totalWords) * 100)}%)
+                  </div>
+                ` : ''}
                 <button @click="${this.endSession}" class="btn">⏹️ End Session</button>
               </div>
             ` : html`

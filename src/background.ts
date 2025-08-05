@@ -86,6 +86,200 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  // Blur mode controls from sidebar
+  if (request.action === 'start_blur_mode') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'start_blur_mode'
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to start blur mode' 
+        });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === 'stop_blur_mode') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'stop_blur_mode'
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to stop blur mode' 
+        });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === 'get_blur_status') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'get_blur_status'
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to get blur status' 
+        });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === 'adjust_blur_speed') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'adjust_blur_speed',
+          wpm: request.wpm
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to adjust blur speed' 
+        });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === 'toggle_blur_pause') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'toggle_blur_pause'
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to toggle blur pause' 
+        });
+      }
+    })();
+    return true;
+  }
+
+  // Session management from sidebar
+  if (request.action === 'start_reading_session') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'start_reading_session',
+          targetWPM: request.targetWPM || 225
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to start session' 
+        });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === 'end_reading_session') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'end_reading_session'
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to end session' 
+        });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === 'get_session_status') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'get_session_status'
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to get session status' 
+        });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === 'update_session_progress') {
+    (async () => {
+      try {
+        const result = await contentBridge.send({
+          action: 'update_session_progress',
+          update: request.update
+        });
+        
+        sendResponse({
+          success: result.success,
+          ...(result.success ? result.data : { error: result.error })
+        });
+      } catch (error) {
+        sendResponse({ 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Failed to update session progress' 
+        });
+      }
+    })();
+    return true;
+  }
+
   // CORS bypass fetch handler (preserved from WebRay-M)
   if (request.action === 'fetch') {
     console.log('Background: Handling fetch request for:', request.url);
@@ -140,8 +334,37 @@ chrome.commands.onCommand.addListener(async (command) => {
         break;
         
       case 'toggle_blur_mode':
-        // TODO: Implement blur mode toggle
-        console.log('👁️ Blur mode toggle - TODO: implement');
+        // Get current blur mode status
+        const statusResult = await contentBridge.send({
+          action: 'get_blur_status'
+        });
+        
+        if (statusResult.success && statusResult.data.success) {
+          const isActive = statusResult.data.isActive;
+          
+          if (isActive) {
+            // Stop blur mode
+            const stopResult = await contentBridge.send({
+              action: 'stop_blur_mode'
+            });
+            
+            if (stopResult.success) {
+              await chrome.action.setBadgeText({ text: '', tabId: activeTab.id });
+              console.log('👁️ Blur mode stopped via keyboard shortcut');
+            }
+          } else {
+            // Start blur mode
+            const startResult = await contentBridge.send({
+              action: 'start_blur_mode'
+            });
+            
+            if (startResult.success) {
+              await chrome.action.setBadgeText({ text: 'B', tabId: activeTab.id });
+              await chrome.action.setBadgeBackgroundColor({ color: '#4285f4' });
+              console.log('👁️ Blur mode started via keyboard shortcut');
+            }
+          }
+        }
         break;
     }
   } catch (error) {

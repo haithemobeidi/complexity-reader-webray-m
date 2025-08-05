@@ -78,12 +78,18 @@ blurModeManager = new BlurModeManager(
       }
     },
     onWordRevealed: (wordIndex, word) => {
-      // Update session with reading progress
+      // Update session with reading progress in real-time
       if (currentSession) {
+        const stats = blurModeManager.getStats();
+        const wordsRevealed = wordIndex + 1;
+        
         sessionManager.updateSessionProgress({ 
-          blurModeWords: wordIndex + 1,
-          completionRate: (wordIndex + 1) / (blurModeManager.getStats().totalWords || 1)
+          blurModeWords: wordsRevealed,
+          wordsRead: wordsRevealed, // Count revealed words as words read
+          completionRate: wordsRevealed / (stats.totalWords || 1)
         });
+        
+        console.log(`📖 Words read in session: ${wordsRevealed}/${stats.totalWords}`);
       }
     },
     onComplete: (stats) => {
@@ -386,7 +392,19 @@ async function initializeOverlaySystem() {
           (async () => {
             try {
               console.log('🎯 Starting blur mode...');
-              const success = await blurModeManager.startBlurMode();
+              
+              // Use cached analysis content if available for consistency
+              const extractedContent = currentAnalysis?.textContent;
+              
+              if (extractedContent) {
+                console.log('📄 Using cached analysis content for blur mode');
+                console.log(`📊 Content length: ${extractedContent.length} characters`);
+                console.log(`📊 Estimated words: ${extractedContent.trim().split(/\s+/).length}`);
+              } else {
+                console.warn('⚠️ No cached analysis found, blur mode will find its own content');
+              }
+              
+              const success = await blurModeManager.startBlurMode(undefined, extractedContent);
               
               if (success) {
                 sendResponse({ success: true, message: 'Blur mode started successfully' });
@@ -617,6 +635,29 @@ async function initializeOverlaySystem() {
               });
             }
           })();
+          return true;
+        }
+
+        // ===== SESSION PROGRESS UPDATE =====
+        
+        // Update session progress from sidebar
+        if (request.action === 'update_session_progress') {
+          try {
+            if (currentSession && request.update) {
+              sessionManager.updateSessionProgress(request.update);
+              sendResponse({ success: true, message: 'Session progress updated' });
+            } else {
+              sendResponse({ 
+                success: false, 
+                error: 'No active session or missing update data' 
+              });
+            }
+          } catch (error) {
+            sendResponse({ 
+              success: false, 
+              error: error instanceof Error ? error.message : 'Failed to update session progress' 
+            });
+          }
           return true;
         }
 
