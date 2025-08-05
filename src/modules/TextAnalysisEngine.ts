@@ -186,6 +186,13 @@ class ContentExtractor {
           lang: article.lang
         });
         
+        // LOG THE ACTUAL EXTRACTED TEXT FOR COMPARISON
+        console.log('📝 EXTRACTED TEXT CONTENT (what extension will analyze):');
+        console.log('='.repeat(80));
+        console.log(article.textContent);
+        console.log('='.repeat(80));
+        console.log(`📊 Word count verification: ${article.textContent.trim().split(/\s+/).filter(w => w.length > 0).length} words`);
+        
         // Show content structure analysis
         const lines = article.textContent.split('\n').filter(line => line.trim().length > 0);
         console.log('📊 Content Structure:', {
