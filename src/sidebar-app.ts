@@ -3,6 +3,18 @@ import { customElement, state } from 'lit/decorators.js';
 import './components/BlurModeControls';
 import type { BlurModeState } from './components/BlurModeControls';
 
+// Motivational quotes from famous authors
+const READING_QUOTES = [
+  { text: "A reader lives a thousand lives before he dies. The man who never reads lives only one.", author: "George R.R. Martin" },
+  { text: "The more that you read, the more things you will know. The more that you learn, the more places you'll go.", author: "Dr. Seuss" },
+  { text: "Reading is to the mind what exercise is to the body.", author: "Joseph Addison" },
+  { text: "Books are a uniquely portable magic.", author: "Stephen King" },
+  { text: "A book is a dream that you hold in your hand.", author: "Neil Gaiman" },
+  { text: "Reading is escape, and the opposite of escape; it's a way to make contact with reality.", author: "Nora Ephron" },
+  { text: "Words have no single fixed meaning. Like wayward electrons, they can spin away from their initial orbit.", author: "David Mitchell" },
+  { text: "Literature is the most agreeable way of ignoring life.", author: "Fernando Pessoa" }
+];
+
 @customElement('sidebar-app')
 export class SidebarApp extends LitElement {
   @state() private currentAnalysis: any = null;
@@ -21,63 +33,133 @@ export class SidebarApp extends LitElement {
   @state() private totalWordsRead = 0;
   @state() private pagesAnalyzed = 0;
   @state() private message = '';
+  @state() private currentQuote = READING_QUOTES[Math.floor(Math.random() * READING_QUOTES.length)];
 
   static styles = css`
     :host {
       display: block;
       width: 100%;
       height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #FFFFFF;
-      color: #1A1A1A;
+      font-family: Charter, Georgia, serif;
+      background: linear-gradient(135deg, #F7F3E9 0%, #FFF8F0 100%);
+      color: #2D4A22;
     }
     
     .reading-assistant {
       display: flex;
       flex-direction: column;
       height: 100%;
-      padding: 16px;
       gap: 16px;
     }
     
     .header {
+      background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+      color: #F7F3E9;
+      padding: 20px 16px;
       text-align: center;
-      border-bottom: 1px solid #E5E7EB;
-      padding-bottom: 16px;
+      position: relative;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 4px 12px rgba(6, 95, 70, 0.15);
+    }
+    
+    .header::before {
+      content: "📚";
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      font-size: 24px;
     }
     
     .header h1 {
       margin: 0;
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 700;
-      color: #2E7D32;
+      font-family: Charter, Georgia, serif;
+      letter-spacing: 0.5px;
     }
     
     .header .tagline {
-      font-size: 12px;
-      color: #6B7280;
+      font-size: 13px;
+      color: #A7F3D0;
       margin-top: 4px;
+      font-style: italic;
+    }
+    
+    /* Motivational Quote Section */
+    .quote-section {
+      background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px;
+      box-shadow: 0 2px 8px rgba(253, 186, 116, 0.2);
+    }
+    
+    .quote-text {
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #7C2D12;
+      margin-bottom: 8px;
+    }
+    
+    .quote-author {
+      font-size: 12px;
+      color: #9A3412;
+      text-align: right;
+      font-weight: 600;
+    }
+    
+    /* Call to Action */
+    .cta-section {
+      background: linear-gradient(135deg, #FED7AA 0%, #FDE68A 100%);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin: 0 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(254, 215, 170, 0.3);
+    }
+    
+    .cta-text {
+      font-size: 14px;
+      color: #065F46;
+      font-weight: 600;
     }
     
     .main-content {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
+      padding: 24px 20px;
     }
     
     .analysis-card {
-      background: #F8F9FA;
-      border: 1px solid #E5E7EB;
-      border-radius: 8px;
-      padding: 16px;
+      background: #FFFFFF;
+      border: 2px solid #FED7AA;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .analysis-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #FED7AA 0%, #F59E0B 50%, #FED7AA 100%);
     }
     
     .page-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
       line-height: 1.4;
+      color: #065F46;
+      font-family: Charter, Georgia, serif;
     }
     
     .complexity-info {
@@ -87,42 +169,122 @@ export class SidebarApp extends LitElement {
       margin-bottom: 16px;
     }
     
-    .complexity-badge {
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 12px;
+    .complexity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 25px;
+      font-family: Inter, sans-serif;
+      font-size: 13px;
       font-weight: 600;
-      color: white;
+      margin-bottom: 20px;
+      border: 2px solid;
     }
     
-    .complexity-badge.simple { background: #10B981; }
-    .complexity-badge.easy { background: #84CC16; }
-    .complexity-badge.moderate { background: #F59E0B; }
-    .complexity-badge.complex { background: #F97316; }
-    .complexity-badge.very { background: #EF4444; }
+    .complexity-pill.simple { 
+      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+      color: #065F46;
+      border-color: #6EE7B7;
+    }
+    .complexity-pill.easy { 
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      color: #047857;
+      border-color: #A7F3D0;
+    }
+    .complexity-pill.moderate { 
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      color: #92400E;
+      border-color: #F59E0B;
+    }
+    .complexity-pill.complex { 
+      background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%);
+      color: #EA580C;
+      border-color: #F97316;
+    }
+    .complexity-pill.very { 
+      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+      color: #B91C1C;
+      border-color: #FCA5A5;
+    }
     
     .reading-time {
       text-align: right;
-      font-size: 12px;
-      color: #6B7280;
+      font-size: 13px;
+      color: #065F46;
+      font-weight: 600;
     }
     
-    .stats {
-      display: flex;
-      justify-content: space-between;
+    .reading-time::before {
+      content: "☕ ";
+      opacity: 0.7;
+    }
+    
+    .reading-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .metric-card {
+      background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+      border: 2px solid #BBF7D0;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .metric-value {
+      font-family: 'SF Mono', 'Monaco', monospace;
+      font-size: 22px;
+      font-weight: bold;
+      color: #065F46;
+      display: block;
+      line-height: 1;
+    }
+    
+    .metric-label {
+      font-family: Inter, sans-serif;
       font-size: 12px;
-      color: #6B7280;
+      color: #047857;
+      margin-top: 6px;
+      font-weight: 500;
     }
     
     .empty-state {
       text-align: center;
       padding: 32px 16px;
-      color: #6B7280;
+      color: #047857;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      border: 2px dashed #A7F3D0;
     }
     
     .empty-state .icon {
-      font-size: 32px;
+      font-size: 48px;
       margin-bottom: 12px;
+      opacity: 0.7;
+    }
+    
+    /* Section Styling */
+    .section {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 24px;
+      border: 2px solid #FED7AA;
+      box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #065F46;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: Charter, Georgia, serif;
     }
     
     .controls {
@@ -132,82 +294,212 @@ export class SidebarApp extends LitElement {
     }
     
     .btn {
-      padding: 12px 16px;
-      border: 1px solid #E5E7EB;
-      border-radius: 6px;
-      background: white;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 20px;
       cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-family: Inter, system-ui, sans-serif;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
     
-    .btn:hover {
-      background: #F3F4F6;
-    }
     
     .btn.primary {
-      background: #2E7D32;
-      color: white;
-      border-color: #2E7D32;
+      background: linear-gradient(135deg, #FED7AA 0%, #F59E0B 100%);
+      color: #92400E;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
     }
     
     .btn.primary:hover {
-      background: #1B5E20;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
     }
     
-    .btn.active {
-      background: #2E7D32;
-      color: white;
-      border-color: #2E7D32;
+    .btn.focus-btn {
+      background: linear-gradient(135deg, #FED7AA 0%, #F59E0B 100%);
+      color: #92400E;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
     }
+    
+    .btn.focus-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+    
+    .btn.focus-btn.active {
+      background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+      color: #F7F3E9;
+      box-shadow: 0 4px 15px rgba(6, 95, 70, 0.3);
+    }
+    
     
     .btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
+    }
+    
+    .speed-section {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 24px;
+      border: 2px solid #FED7AA;
+      box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
     }
     
     .speed-control {
+      background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+      border: 2px solid #BBF7D0;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    
+    .speed-slider-container {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
-    }
-    
-    .speed-control input {
-      flex: 1;
-    }
-    
-    .session-info {
-      background: #F8F9FA;
-      border: 1px solid #E5E7EB;
-      border-radius: 6px;
-      padding: 12px;
-      font-size: 12px;
-    }
-    
-    .session-stats {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    
-    .message {
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-size: 12px;
+      gap: 12px;
       margin-top: 8px;
     }
     
-    .message.success {
-      background: #D1FAE5;
+    .speed-slider {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #FED7AA 0%, #F59E0B 100%);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    
+    .speed-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(6, 95, 70, 0.4);
+      border: 3px solid #FFFFFF;
+    }
+    
+    .speed-value {
+      font-family: 'SF Mono', 'Monaco', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: #065F46;
+      background: #FFFFFF;
+      padding: 8px 12px;
+      border-radius: 12px;
+      min-width: 70px;
+      text-align: center;
+      border: 2px solid #BBF7D0;
+    }
+    
+    .session-info {
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      border: 2px solid #6EE7B7;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(110, 231, 183, 0.2);
+    }
+    
+    .session-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .session-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #065F46;
+      font-family: Charter, Georgia, serif;
+    }
+    
+    .session-duration {
+      font-size: 24px;
+      font-weight: 700;
       color: #047857;
-      border: 1px solid #10B981;
+      text-align: center;
+      margin: 12px 0;
+    }
+    
+    .session-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .session-stat {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 8px;
+      border-radius: 8px;
+    }
+    
+    .session-stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #065F46;
+      display: block;
+    }
+    
+    .session-stat-label {
+      font-size: 10px;
+      color: #047857;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .message {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 12px;
+      border: 2px solid;
+      backdrop-filter: blur(10px);
+    }
+    
+    .message.success {
+      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+      color: #065F46;
+      border-color: #6EE7B7;
+      box-shadow: 0 2px 8px rgba(110, 231, 183, 0.3);
     }
     
     .message.error {
-      background: #FEE2E2;
-      color: #B91C1C;
-      border: 1px solid #EF4444;
+      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+      color: #7F1D1D;
+      border-color: #F87171;
+      box-shadow: 0 2px 8px rgba(248, 113, 113, 0.3);
+    }
+    
+    /* Custom Icons */
+    .custom-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 420px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .session-stats {
+        grid-template-columns: 1fr;
+      }
     }
   `;
 
@@ -575,97 +867,215 @@ export class SidebarApp extends LitElement {
     }
   }
 
+  private getComplexityMessage(score: string): string {
+    const messages = {
+      'simple': 'Perfect for a quick read! ☕',
+      'easy': 'Nice and smooth - enjoy! 🌟',
+      'moderate': "A good challenge - you've got this! 💪",
+      'complex': 'Complex content - take your time! 🎯',
+      'very': 'Deep content - perfect for focused reading! 🧠'
+    };
+    return messages[score.toLowerCase() as keyof typeof messages] || 'Ready for this reading adventure! 📚';
+  }
+
+  private getReadingTimeLabel(minutes: number): string {
+    if (minutes <= 2) return '☕ Quick sip reading time';
+    if (minutes <= 5) return '🫖 Cozy reading time';
+    if (minutes <= 10) return '📖 Comfortable reading time';
+    return '🛋️ Deep dive reading time';
+  }
+
   render() {
     return html`
       <div class="reading-assistant">
         <header class="header">
           <h1>ReadWise Pro</h1>
-          <div class="tagline">Smart Reading Assistant</div>
+          <div class="tagline">Your friendly reading companion</div>
         </header>
+        
+        <!-- Motivational Quote Section -->
+        <div class="quote-section">
+          <div class="quote-text">"${this.currentQuote.text}"</div>
+          <div class="quote-author">— ${this.currentQuote.author}</div>
+        </div>
+
+        <!-- Call to Action -->
+        ${this.currentAnalysis ? html`
+          <div class="cta-section">
+            <div class="cta-text">📚 Great choice! Let's dive into this article together</div>
+          </div>
+        ` : ''}
 
         <main class="main-content">
           ${this.currentAnalysis ? html`
             <div class="analysis-card">
               <div class="page-title">${this.currentAnalysis.title}</div>
               
-              <div class="complexity-info">
-                <div class="complexity-badge ${this.currentAnalysis.complexity.complexityScore.toLowerCase()}">
-                  ${this.currentAnalysis.complexity.complexityScore}
-                </div>
-                <div class="reading-time">
-                  ${this.currentAnalysis.readingTime} min read
-                </div>
+              <div class="welcome-message">
+                📚 Great choice! Let's dive into this article together
               </div>
               
-              <div class="stats">
-                <span>${this.currentAnalysis.wordCount.toLocaleString()} words</span>
-                <span>${this.currentAnalysis.complexity.readabilityLevel} level</span>
+              <div class="complexity-pill ${this.currentAnalysis.complexity.complexityScore.toLowerCase()}">
+                <span class="complexity-emoji">📈</span>
+                ${this.currentAnalysis.complexity.complexityScore} • Grade ${this.currentAnalysis.complexity.readabilityLevel.split(' ')[0]} • ${this.getComplexityMessage(this.currentAnalysis.complexity.complexityScore)}
+              </div>
+              
+              <div class="reading-metrics">
+                <div class="metric-card">
+                  <span class="metric-value">${this.currentAnalysis.wordCount.toLocaleString()}</span>
+                  <div class="metric-label">WORDS TO EXPLORE</div>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-value">${this.currentAnalysis.readingTime} min</span>
+                  <div class="metric-label">COZY READING TIME</div>
+                </div>
               </div>
             </div>
           ` : html`
             <div class="empty-state">
-              <div class="icon">📖</div>
-              <div>${this.isAnalyzing ? 'Analyzing page...' : 'No readable content found on this page'}</div>
+              <div class="icon">📚</div>
+              <div>${this.isAnalyzing ? '🔍 Discovering the perfect reading experience for you...' : "📖 Ready to analyze some amazing content! Navigate to an article and let's begin your reading journey."}</div>
             </div>
           `}
 
-          <div class="controls">
+          <!-- Focus Helper Section -->
+          <div class="section">
+            <div class="section-title">
+              <span class="custom-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  <path d="M12 2l-2 6h4l-2-6z" fill="#FED7AA" fill-opacity="0.3" stroke="none"/>
+                  <circle cx="12" cy="2" r="1" fill="#FED7AA"/>
+                  <path d="M5 10h3" stroke="#FED7AA" stroke-width="2"/>
+                  <path d="M5 12h4" stroke="#FED7AA" stroke-width="2"/>
+                  <path d="M15 10h3" stroke="#065F46" stroke-width="1.5" opacity="0.4"/>
+                  <path d="M15 12h2" stroke="#065F46" stroke-width="1.5" opacity="0.4"/>
+                  <circle cx="12" cy="8" r="1.5" fill="none" stroke="#FED7AA" stroke-width="1"/>
+                </svg>
+              </span>
+              Focus Helper
+            </div>
+            
             <button 
               @click="${this.analyzeCurrentPage}" 
               class="btn primary"
               ?disabled="${this.isAnalyzing}"
             >
-              ${this.isAnalyzing ? '⏳ Analyzing...' : '🔄 Refresh Analysis'}
+              ${this.isAnalyzing ? '🔍 Analyzing your content...' : '🔍 Analyze Page'}
             </button>
-
-            <!-- Modular Blur Mode Controls Component -->
-            <blur-mode-controls
-              .state="${this.blurModeState}"
-              .defaultWPM="${this.readingSpeedWPM}"
-              .disabled="${this.isAnalyzing}"
-            ></blur-mode-controls>
-
-            <div class="speed-control">
-              <span>Global Reading Speed:</span>
-              <input 
-                type="range" 
-                min="150" 
-                max="400" 
-                step="25"
-                .value="${this.readingSpeedWPM}"
-                @input="${this.updateReadingSpeed}"
-              />
-              <span>${this.readingSpeedWPM} WPM</span>
+            
+            <button 
+              @click="${this.toggleBlurMode}" 
+              class="btn focus-btn ${this.blurModeActive ? 'active' : ''}"
+              ?disabled="${!this.currentAnalysis || this.isAnalyzing}"
+            >
+              ${this.blurModeActive ? '✅ Create peaceful reading space (ON)' : '🕯️ Create peaceful reading space'}
+            </button>
+            
+            <div style="font-size: 12px; color: #047857; font-style: italic; text-align: center; margin-top: 8px;">
+              ${this.blurModeActive ? '🧘‍♀️ Focus mode active - highlight important text and reduce distractions' : '💡 Highlight important text and reduce distractions'}
             </div>
+          </div>
 
+          <!-- Speed Control Section -->
+          <div class="speed-section">
+            <div class="section-title">
+              <span class="custom-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 6c3 0 6 1 8 1s5-1 8-1" stroke="#065F46" stroke-width="3"/>
+                  <path d="M2 10c4 0 7 0.5 10 0.5s6-0.5 10-0.5" stroke="#FED7AA" stroke-width="2.5"/>
+                  <path d="M2 14c2 0 4 1.5 6 1.5s4-1.5 8-1.5 6 1.5 8 1.5" stroke="#065F46" stroke-width="2"/>
+                  <path d="M2 18c5 0 8 0.5 12 0.5s7-0.5 10-0.5" stroke="#FED7AA" stroke-width="1.5"/>
+                  <path d="M18 5l2 1-2 1" stroke="#065F46" stroke-width="2"/>
+                  <path d="M20 9l2 1-2 1" stroke="#FED7AA" stroke-width="2"/>
+                  <path d="M19 13l2 1-2 1" stroke="#065F46" stroke-width="1.5"/>
+                </svg>
+              </span>
+              📖 My Reading Rhythm
+            </div>
+            <div class="speed-control">
+              <div class="speed-slider-container">
+                <span style="font-size: 12px; color: #047857; font-weight: 500;">Slow</span>
+                <input 
+                  class="speed-slider"
+                  type="range" 
+                  min="150" 
+                  max="400" 
+                  step="25"
+                  .value="${this.readingSpeedWPM}"
+                  @input="${this.updateReadingSpeed}"
+                />
+                <span style="font-size: 12px; color: #047857; font-weight: 500;">Fast</span>
+              </div>
+              <div style="text-align: center; margin-top: 12px;">
+                <div class="speed-value">${this.readingSpeedWPM} WPM</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Your Reading Journey Section -->
+          <div class="section">
+            <div class="section-title">
+              <span class="custom-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 2v20l3-3 3 3V2z" fill="#FED7AA" fill-opacity="0.2"/>
+                  <path d="M9 2v20l3-3 3 3V2z"/>
+                  <path d="M2 6c2 0 4 2 6 2s4-2 6-2" stroke="#FED7AA" stroke-width="2" opacity="0.6"/>
+                  <path d="M2 10c2 0 4 2 6 2s4-2 6-2" stroke="#FED7AA" stroke-width="2" opacity="0.4"/>
+                  <path d="M2 14c2 0 4 2 6 2s4-2 6-2" stroke="#FED7AA" stroke-width="2" opacity="0.2"/>
+                  <circle cx="8" cy="6" r="1" fill="#065F46"/>
+                  <circle cx="14" cy="10" r="1" fill="#FED7AA"/>
+                  <circle cx="8" cy="14" r="1" fill="#065F46" opacity="0.5"/>
+                  <circle cx="12" cy="8" r="2" fill="none" stroke="#065F46" stroke-width="1.5"/>
+                  <circle cx="12" cy="8" r="1" fill="#FED7AA"/>
+                </svg>
+              </span>
+              Your Reading Journey
+            </div>
+            
             ${this.sessionStartTime ? html`
               <div class="session-info">
-                <div class="session-stats">
-                  <span>Time: ${this.getSessionDuration()}</span>
-                  <span>Words: ${this.totalWordsRead.toLocaleString()}</span>
-                  ${this.blurModeActive ? html`
-                    <span style="color: #2e7d32; font-weight: 600;">
-                      📖 Focus Mode Active
-                    </span>
-                  ` : html`
-                    <span>Pages: ${this.pagesAnalyzed}</span>
-                  `}
+                <div class="session-header">
+                  <span style="font-size: 16px;">📖</span>
+                  <div class="session-title">You've been reading for</div>
                 </div>
+                <div class="session-duration">${this.getSessionDuration()}</div>
+                
+                <div class="session-stats">
+                  <div class="session-stat">
+                    <span class="session-stat-value">${this.totalWordsRead.toLocaleString()}</span>
+                    <span class="session-stat-label">Words explored</span>
+                  </div>
+                  <div class="session-stat">
+                    <span class="session-stat-value">${this.pagesAnalyzed}</span>
+                    <span class="session-stat-label">Articles read</span>
+                  </div>
+                </div>
+                
                 ${this.blurModeActive && this.blurModeState.totalWords > 0 ? html`
-                  <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
-                    Progress: ${this.blurModeState.wordsRevealed}/${this.blurModeState.totalWords} words 
-                    (${Math.round((this.blurModeState.wordsRevealed / this.blurModeState.totalWords) * 100)}%)
+                  <div style="background: rgba(255,255,255,0.9); padding: 8px; border-radius: 8px; text-align: center; margin-bottom: 12px;">
+                    <div style="font-size: 12px; color: #047857; margin-bottom: 4px;">🎯 Focus Mode Progress</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #065F46;">
+                      ${this.blurModeState.wordsRevealed}/${this.blurModeState.totalWords} words 
+                      (${Math.round((this.blurModeState.wordsRevealed / this.blurModeState.totalWords) * 100)}%)
+                    </div>
                   </div>
                 ` : ''}
-                <button @click="${this.endSession}" class="btn">⏹️ End Session</button>
+                
+                <button @click="${this.endSession}" class="btn">🏁 Complete Reading Journey</button>
               </div>
             ` : html`
-              <button @click="${this.startSession}" class="btn">▶️ Start Reading Session</button>
+              <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.6); border-radius: 12px; border: 2px dashed #A7F3D0;">
+                <div style="font-size: 32px; margin-bottom: 12px; opacity: 0.7;">📖</div>
+                <div style="font-size: 14px; color: #047857; margin-bottom: 12px;">Ready to start your reading adventure?</div>
+                <button @click="${this.startSession}" class="btn primary">🚀 Begin Reading Session</button>
+              </div>
             `}
           </div>
 
           ${this.message ? html`
-            <div class="message ${this.message.includes('✅') || this.message.includes('🚀') ? 'success' : 'error'}">
+            <div class="message ${this.message.includes('✅') || this.message.includes('🚀') || this.message.includes('📚') || this.message.includes('🐑️') ? 'success' : 'error'}">
               ${this.message}
             </div>
           ` : ''}

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadWise Pro - Warm Reading Companion</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Charter, Georgia, 'Times New Roman', serif;
+            width: 400px;
+            height: 100vh;
+            background: linear-gradient(135deg, #F7F3E9 0%, #FDF8F0 100%);
+            color: #065F46;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+            color: #F7F3E9;
+            padding: 24px 20px;
+            text-align: center;
+            border-radius: 0 0 24px 24px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(6, 95, 70, 0.15);
+        }
+
+        .header::before {
+            content: "📖";
+            position: absolute;
+            top: 12px;
+            left: 20px;
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .header::after {
+            content: "☀️";
+            position: absolute;
+            top: 12px;
+            right: 20px;
+            font-size: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .app-title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .app-subtitle {
+            font-family: Inter, system-ui, sans-serif;
+            font-size: 13px;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px 20px;
+        }
+
+        /* Article Analysis Card */
+        .analysis-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+            border: 2px solid #FED7AA;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analysis-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FED7AA 0%, #F59E0B 50%, #FED7AA 100%);
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #FED7AA 0%, #FECACA 100%);
+            color: #065F46;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: Inter, sans-serif;
+        }
+
+        .article-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #065F46;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .complexity-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            color: #B91C1C;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-family: Inter, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 2px solid #FCA5A5;
+        }
+
+        .complexity-emoji {
+            font-size: 16px;
+        }
+
+        .reading-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+            border: 2px solid #BBF7D0;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 22px;
+            font-weight: bold;
+            color: #065F46;
+            display: block;
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-family: Inter, sans-serif;
+            font-size: 12px;
+            color: #047857;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Focus Mode Section */
+        .focus-section {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+            border: 2px solid #FED7AA;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #065F46;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .focus-toggle {
+            background: linear-gradient(135deg, #FED7AA 0%, #F59E0B 100%);
+            color: #92400E;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 20px;
+            font-family: Inter, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .focus-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .focus-toggle.active {
+            background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+            color: #F7F3E9;
+            box-shadow: 0 4px 15px rgba(6, 95, 70, 0.3);
+        }
+
+        .focus-description {
+            font-family: Inter, sans-serif;
+            font-size: 13px;
+            color: #6B7280;
+            text-align: center;
+            margin-top: 12px;
+            font-style: italic;
+        }
+
+        /* Session Statistics */
+        .stats-section {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+            border: 2px solid #FED7AA;
+        }
+
+        .session-summary {
+            background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid #BBF7D0;
+        }
+
+        .session-greeting {
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+            color: #047857;
+            margin-bottom: 8px;
+        }
+
+        .session-time {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 32px;
+            font-weight: bold;
+            color: #065F46;
+            line-height: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-bubble {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 20px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 24px;
+            font-weight: bold;
+            color: #92400E;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-family: Inter, sans-serif;
+            font-size: 11px;
+            color: #A16207;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Reading Speed Control */
+        .speed-section {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+            border: 2px solid #FED7AA;
+        }
+
+        .speed-display {
+            text-align: center;
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #F59E0B;
+        }
+
+        .speed-value {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 40px;
+            font-weight: bold;
+            color: #92400E;
+            line-height: 1;
+        }
+
+        .speed-label {
+            font-family: Inter, sans-serif;
+            font-size: 12px;
+            color: #A16207;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .speed-slider {
+            width: 100%;
+            margin: 16px 0;
+            -webkit-appearance: none;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #FED7AA 0%, #F59E0B 100%);
+            outline: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #065F46;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(6, 95, 70, 0.3);
+            border: 2px solid #FFFFFF;
+        }
+
+        .speed-encouragement {
+            font-family: Inter, sans-serif;
+            font-size: 12px;
+            color: #6B7280;
+            text-align: center;
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        /* Settings Section */
+        .settings-section {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 25px rgba(254, 215, 170, 0.2);
+            border: 2px solid #FED7AA;
+        }
+
+        .settings-button {
+            background: linear-gradient(135deg, #F7F3E9 0%, #F3F4F6 100%);
+            border: 2px solid #E5E7EB;
+            color: #065F46;
+            padding: 16px 24px;
+            border-radius: 20px;
+            font-family: Inter, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .settings-button:hover {
+            background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+            color: #F7F3E9;
+            border-color: #065F46;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 95, 70, 0.2);
+        }
+
+        /* Progress Bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: #F3F4F6;
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FED7AA 0%, #F59E0B 50%, #065F46 100%);
+            width: 35%;
+            transition: width 0.5s ease;
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* Motivational Quote */
+        .motivation-card {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .quote-text {
+            font-family: Charter, Georgia, serif;
+            font-size: 14px;
+            color: #92400E;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .quote-author {
+            font-family: Inter, sans-serif;
+            font-size: 11px;
+            color: #A16207;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F7F3E9;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #FED7AA 0%, #F59E0B 100%);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress">
+        <div class="progress-fill"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="app-title">ReadWise Pro</div>
+        <div class="app-subtitle">Your friendly reading companion</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Message -->
+        <div class="motivation-card">
+            <div class="quote-text">"A reader lives a thousand lives before he dies. The man who never reads lives only one."</div>
+            <div class="quote-author">— George R.R. Martin</div>
+        </div>
+
+        <!-- Article Analysis -->
+        <div class="analysis-card">
+            <div class="welcome-message">
+                📚 Great choice! Let's dive into this article together
+            </div>
+            
+            <div class="article-title">The Future of Artificial Intelligence in Healthcare</div>
+            <div class="complexity-pill">
+                <span class="complexity-emoji">🧠</span>
+                Complex • Grade 14 • Take your time!
+            </div>
+            
+            <div class="reading-metrics">
+                <div class="metric-card">
+                    <span class="metric-value">1,247</span>
+                    <span class="metric-label">Words to explore</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value">5 min</span>
+                    <span class="metric-label">Cozy reading time</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Focus Mode -->
+        <div class="focus-section">
+            <div class="section-title">
+                🎯 Focus Helper
+            </div>
+            <button class="focus-toggle" onclick="toggleFocus()">
+                <span>✨</span>
+                <span id="focusText">Create peaceful reading space</span>
+            </button>
+            <div class="focus-description">Highlight important text and reduce distractions</div>
+        </div>
+
+        <!-- Session Statistics -->
+        <div class="stats-section">
+            <div class="section-title">
+                📊 Your Reading Journey
+            </div>
+            
+            <div class="session-summary">
+                <div class="session-greeting">You've been reading for</div>
+                <div class="session-time">15 minutes</div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-bubble">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Articles enjoyed</span>
+                </div>
+                <div class="stat-bubble">
+                    <span class="stat-number">2.1k</span>
+                    <span class="stat-label">Words discovered</span>
+                </div>
+                <div class="stat-bubble">
+                    <span class="stat-number">87%</span>
+                    <span class="stat-label">Focus level</span>
+                </div>
+                <div class="stat-bubble">
+                    <span class="stat-number">🔥</span>
+                    <span class="stat-label">Reading streak</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading Speed -->
+        <div class="speed-section">
+            <div class="section-title">
+                ⚡ Reading Pace
+            </div>
+            <div class="speed-display">
+                <div class="speed-value" id="speedValue">250</div>
+                <div class="speed-label">words per minute</div>
+            </div>
+            <input type="range" class="speed-slider" min="150" max="400" value="250" id="speedSlider">
+            <div class="speed-encouragement">Find your perfect reading rhythm 🎵</div>
+        </div>
+
+        <!-- Settings -->
+        <div class="settings-section">
+            <div class="section-title">
+                ⚙️ Personalize Experience
+            </div>
+            <button class="settings-button">
+                <span>🛠️</span>
+                Make it yours
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function toggleFocus() {
+            const button = document.querySelector('.focus-toggle');
+            const text = document.getElementById('focusText');
+            
+            button.classList.toggle('active');
+            
+            if (button.classList.contains('active')) {
+                button.innerHTML = '<span>✅</span><span>Peaceful mode active</span>';
+            } else {
+                button.innerHTML = '<span>✨</span><span>Create peaceful reading space</span>';
+            }
+        }
+
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            const value = this.value;
+            document.getElementById('speedValue').textContent = value;
+            
+            // Update encouragement based on speed
+            const encouragement = document.querySelector('.speed-encouragement');
+            if (value < 200) {
+                encouragement.textContent = "Take your time, savor every word 🌙";
+            } else if (value > 300) {
+                encouragement.textContent = "Speed reader extraordinaire! ⚡";
+            } else {
+                encouragement.textContent = "Find your perfect reading rhythm 🎵";
+            }
+        });
+
+        // Animate reading progress
+        let progress = 35;
+        setInterval(() => {
+            progress = (progress + 0.4) % 100;
+            document.querySelector('.progress-fill').style.width = progress + '%';
+        }, 2500);
+
+        // Add gentle animations on scroll
+        window.addEventListener('scroll', () => {
+            const cards = document.querySelectorAll('.analysis-card, .focus-section, .stats-section, .speed-section, .settings-section');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    card.style.transform = 'translateY(0)';
+                    card.style.opacity = '1';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

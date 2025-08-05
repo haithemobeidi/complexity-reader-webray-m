@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadWise Pro - Scholarly Reader</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            width: 400px;
+            height: 100vh;
+            background: linear-gradient(135deg, #FFF8F0 0%, #F5F0E8 100%);
+            color: #1E3A8A;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+            color: #FFF8F0;
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+            border-bottom: 3px solid #D97706;
+        }
+
+        .header::before {
+            content: "📚";
+            position: absolute;
+            top: 8px;
+            left: 16px;
+            font-size: 24px;
+        }
+
+        .app-title {
+            font-family: Georgia, serif;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .app-subtitle {
+            font-family: Inter, system-ui, sans-serif;
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px 16px;
+        }
+
+        /* Article Analysis Card */
+        .analysis-card {
+            background: #FFFFFF;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+            position: relative;
+        }
+
+        .analysis-card::before {
+            content: "🔍";
+            position: absolute;
+            top: -8px;
+            right: 16px;
+            background: #D97706;
+            padding: 8px;
+            border-radius: 50%;
+            font-size: 16px;
+        }
+
+        .article-title {
+            font-family: Georgia, serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1E3A8A;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .complexity-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-family: Inter, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .analysis-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 12px;
+            background: #F8FAFC;
+            border-radius: 6px;
+            border-left: 4px solid #D97706;
+        }
+
+        .metric-value {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1E3A8A;
+            display: block;
+        }
+
+        .metric-label {
+            font-family: Inter, sans-serif;
+            font-size: 11px;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        /* Focus Mode Section */
+        .focus-section {
+            background: #FFFFFF;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+        }
+
+        .section-title {
+            font-family: Georgia, serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1E3A8A;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .focus-toggle {
+            background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .focus-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+        }
+
+        .focus-toggle.active {
+            background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+        }
+
+        /* Session Statistics */
+        .stats-section {
+            background: #FFFFFF;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 16px 12px;
+            background: linear-gradient(135deg, #FFF8F0 0%, #F7F3E9 100%);
+            border-radius: 6px;
+            border: 1px solid #F3E8FF;
+        }
+
+        .stat-number {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 24px;
+            font-weight: bold;
+            color: #D97706;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-family: Inter, sans-serif;
+            font-size: 11px;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        /* Reading Speed Control */
+        .speed-control {
+            background: #FFFFFF;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+        }
+
+        .speed-slider {
+            width: 100%;
+            margin: 16px 0;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #D97706 0%, #F59E0B 100%);
+            outline: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1E3A8A;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .speed-display {
+            text-align: center;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1E3A8A;
+            margin-bottom: 8px;
+        }
+
+        /* Settings Section */
+        .settings-section {
+            background: #FFFFFF;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+        }
+
+        .settings-button {
+            background: transparent;
+            border: 2px solid #1E3A8A;
+            color: #1E3A8A;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .settings-button:hover {
+            background: #1E3A8A;
+            color: #FFF8F0;
+        }
+
+        /* Progress Bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #E5E7EB;
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #D97706 0%, #F59E0B 100%);
+            width: 35%;
+            transition: width 0.3s ease;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #D97706;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #B45309;
+        }
+    </style>
+</head>
+<body>
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress">
+        <div class="progress-fill"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="app-title">ReadWise Pro</div>
+        <div class="app-subtitle">Scholarly Reading Companion</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Article Analysis -->
+        <div class="analysis-card">
+            <div class="article-title">The Future of Artificial Intelligence in Healthcare</div>
+            <div class="complexity-badge">Complex • Grade 14</div>
+            
+            <div class="analysis-metrics">
+                <div class="metric">
+                    <span class="metric-value">1,247</span>
+                    <span class="metric-label">Words</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">5 min</span>
+                    <span class="metric-label">Read Time</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Focus Mode -->
+        <div class="focus-section">
+            <div class="section-title">
+                🎯 Focus Enhancement
+            </div>
+            <button class="focus-toggle">
+                <span>🔍</span>
+                Activate Focus Mode
+            </button>
+        </div>
+
+        <!-- Session Statistics -->
+        <div class="stats-section">
+            <div class="section-title">
+                📊 Reading Session
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">15</span>
+                    <span class="stat-label">Minutes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Articles</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">87%</span>
+                    <span class="stat-label">Comprehension</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">2.1k</span>
+                    <span class="stat-label">Words Read</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading Speed Control -->
+        <div class="speed-control">
+            <div class="section-title">
+                ⚡ Reading Velocity
+            </div>
+            <div class="speed-display">250 WPM</div>
+            <input type="range" class="speed-slider" min="150" max="400" value="250">
+        </div>
+
+        <!-- Settings -->
+        <div class="settings-section">
+            <div class="section-title">
+                ⚙️ Preferences
+            </div>
+            <button class="settings-button">
+                <span>🛠️</span>
+                Configure Settings
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Simple interactivity for demonstration
+        document.querySelector('.focus-toggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.innerHTML = this.classList.contains('active') 
+                ? '<span>✅</span>Focus Mode Active' 
+                : '<span>🔍</span>Activate Focus Mode';
+        });
+
+        document.querySelector('.speed-slider').addEventListener('input', function() {
+            document.querySelector('.speed-display').textContent = this.value + ' WPM';
+        });
+
+        // Simulate reading progress
+        let progress = 35;
+        setInterval(() => {
+            progress = (progress + 0.5) % 100;
+            document.querySelector('.progress-fill').style.width = progress + '%';
+        }, 2000);
+    </script>
+</body>
+</html>

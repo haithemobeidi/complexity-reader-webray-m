@@ -1,0 +1,19 @@
+<!-- Text Flow Rivers - Reading Speed Icon -->
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Flowing text lines with varying thickness to show speed -->
+  <path d="M2 6c3 0 6 1 8 1s5-1 8-1" stroke="#065F46" stroke-width="3"/>
+  <path d="M2 10c4 0 7 0.5 10 0.5s6-0.5 10-0.5" stroke="#FED7AA" stroke-width="2.5"/>
+  <path d="M2 14c2 0 4 1.5 6 1.5s4-1.5 8-1.5 6 1.5 8 1.5" stroke="#065F46" stroke-width="2"/>
+  <path d="M2 18c5 0 8 0.5 12 0.5s7-0.5 10-0.5" stroke="#FED7AA" stroke-width="1.5"/>
+  
+  <!-- Speed indicators (arrow-like flow) -->
+  <path d="M18 5l2 1-2 1" stroke="#065F46" stroke-width="2"/>
+  <path d="M20 9l2 1-2 1" stroke="#FED7AA" stroke-width="2"/>
+  <path d="M19 13l2 1-2 1" stroke="#065F46" stroke-width="1.5"/>
+  
+  <!-- Rhythm dots showing pace -->
+  <circle cx="5" cy="6" r="0.5" fill="#065F46"/>
+  <circle cx="10" cy="10" r="0.5" fill="#FED7AA"/>
+  <circle cx="7" cy="14" r="0.5" fill="#065F46"/>
+  <circle cx="13" cy="18" r="0.5" fill="#FED7AA"/>
+</svg>
