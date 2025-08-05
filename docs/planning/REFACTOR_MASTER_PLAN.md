@@ -15,7 +15,7 @@ This project is a complete refactor of the complexity-reader extension using Web
 
 ## **Phase 1: Deep Analysis & Understanding** 
 
-### 1.1 Study Complexity-Reader Architecture
+### 1.1 Study Complexity-Reader Architecture & Issues
 - [ ] **Analyze manifest.json** - permissions, commands, structure
 - [ ] **Study background.js** - service worker, message handling, keyboard commands  
 - [ ] **Study content.js** - text analysis, blur mode, DOM manipulation
@@ -23,16 +23,88 @@ This project is a complete refactor of the complexity-reader extension using Web
 - [ ] **Analyze TypeScript source files** in `/src/` folder
 - [ ] **Document key algorithms** - Coleman-Liau Index, content extraction, blur mode
 - [ ] **Identify core features** - text analysis, blur mode, reading sessions, statistics
-- [ ] **Document known issues** - injection failures, academic site problems
+- [ ] **Document critical reliability issues**:
+  - **Content script injection failures** on academic sites, complex pages
+  - **Context invalidation errors** during Chrome storage operations
+  - **Race conditions** in message passing between background/content/sidebar
+  - **DOM manipulation conflicts** with dynamic page content
+  - **State management problems** across extension reloads/updates
 
-### 1.2 Study WebRay-M Framework
-- [ ] **Analyze core modules** in `/packages/core/`
-- [ ] **Study ContentScriptBridge** - enhanced injection reliability
-- [ ] **Review sidebar-basic example** - project structure, build system
-- [ ] **Study design system** - Material Design 3 principles, color tokens
-- [ ] **Understand module system** - how modules are structured and imported
-- [ ] **Review build configuration** - Vite setup, TypeScript compilation
-- [ ] **Document available utilities** - what's already built vs what needs creating
+### 1.2 Study WebRay-M Framework - Purpose & Architecture
+- [ ] **Understand WebRay-M's core mission**:
+  - **Reliability-first framework** designed to solve Chrome extension instability
+  - **Modular architecture** for building reusable, extractable components
+  - **Enhanced patterns** that fix common extension failure points
+  - **Design system integration** for professional, consistent UIs
+  - **Development acceleration** through proven, battle-tested patterns
+
+- [ ] **Study ContentScriptBridge reliability patterns**:
+  - **Auto-retry injection** with exponential backoff
+  - **Context invalidation handling** for Chrome storage operations
+  - **Message passing reliability** with acknowledgment patterns
+  - **State coordination** across extension lifecycle events
+  - **Error recovery mechanisms** for failed operations
+
+- [ ] **Analyze modular architecture principles**:
+  - **Module extraction methodology** - how to build for reusability
+  - **Separation of concerns** - business logic vs UI vs framework
+  - **Interface design** - clean APIs between modules
+  - **Error boundary patterns** - preventing module failures from cascading
+  - **Testing strategies** - how modules should be unit testable
+
+- [ ] **Study WebRay-M design system integration**:
+  - **Material Design 3 tokens** - colors, typography, spacing
+  - **Component patterns** - how to build consistent UI elements
+  - **Responsive design** - sidebar, overlay, and popup patterns
+  - **Accessibility considerations** - ARIA, keyboard navigation, screen readers
+  - **Theme system** - light/dark mode, custom theming capabilities
+
+### 1.3 Understand the WebRay-M Refactor Strategy
+- [ ] **WebRay-M as reliability solution**:
+  - How ContentScriptBridge solves complexity-reader's injection failures
+  - How proper error handling prevents the "extension stops working" problem
+  - How state management patterns prevent context invalidation issues
+  - Why modular architecture makes debugging and maintenance easier
+
+- [ ] **WebRay-M as development accelerator**:
+  - How the framework reduces boilerplate code
+  - How reusable modules prevent rebuilding common functionality
+  - How the design system eliminates UI/UX decision fatigue
+  - How proven patterns reduce development time and bugs
+
+- [ ] **Module extraction benefits**:
+  - How well-designed modules can be extracted for WebRay-M ecosystem
+  - Why TextAnalysisEngine could benefit other reading-focused extensions
+  - How BlurModeManager could be reused for reading/learning tools
+  - Why modular architecture enables this extraction workflow
+
+---
+
+## **🎯 Strategic Project Value & Learning Outcomes**
+
+### **Why This Refactor Matters**
+This project serves multiple strategic purposes beyond just rebuilding complexity-reader:
+
+1. **Reliability Validation**: Proves WebRay-M can solve real-world Chrome extension stability issues
+2. **Framework Stress Test**: Tests WebRay-M patterns against a complex, feature-rich extension
+3. **Module Ecosystem Growth**: Creates reusable modules (TextAnalysisEngine, BlurModeManager) for other extensions
+4. **Development Speed Validation**: Measures if WebRay-M actually accelerates development vs building from scratch
+5. **Design System Proof**: Demonstrates Material Design 3 integration in real extension context
+
+### **Expected Learning & Validation**
+- **ContentScriptBridge effectiveness** vs traditional injection methods
+- **Modular architecture benefits** for extension maintenance and debugging  
+- **Module extraction workflow** - how easy it is to extract modules for reuse
+- **Development velocity** - time savings from using WebRay-M vs vanilla Chrome extension development
+- **User experience improvement** - how WebRay-M's design system improves extension usability
+- **Error recovery capabilities** - how well WebRay-M patterns handle edge cases and failures
+
+### **Success Metrics**
+- **Reliability**: Zero injection failures on previously problematic sites
+- **Performance**: Equal or better performance than original complexity-reader
+- **Code Quality**: Cleaner, more maintainable architecture with proper separation of concerns
+- **Reusability**: At least 2-3 modules should be extractable for WebRay-M ecosystem
+- **User Experience**: Professional UI that matches or exceeds browser-native extension quality
 
 ---
 
@@ -164,11 +236,21 @@ This project is a complete refactor of the complexity-reader extension using Web
 
 ## **Key Project Principles**
 
-1. **Actual Refactoring**: Extract and rebuild working code from complexity-reader, don't just rename WebRay-M
-2. **Feature Parity**: Every feature from complexity-reader must work identically
-3. **WebRay-M Integration**: Use framework properly - ContentScriptBridge, design system, modular architecture
-4. **Modular Design**: Build for future module extraction to benefit WebRay-M ecosystem
-5. **Professional Quality**: Material Design 3, robust error handling, comprehensive testing
+1. **Actual Refactoring**: Extract and rebuild working code from complexity-reader, don't just rename WebRay-M components
+2. **Feature Parity**: Every feature from complexity-reader must work identically with enhanced reliability
+3. **WebRay-M Integration**: Use framework properly - ContentScriptBridge, design system, modular architecture patterns
+4. **Reliability First**: Fix the core instability issues that plague the original extension using WebRay-M patterns
+5. **Modular Design**: Build for future module extraction to benefit WebRay-M ecosystem and other extensions
+6. **Professional Quality**: Material Design 3, robust error handling, comprehensive testing, production-ready code
+7. **Strategic Validation**: This refactor validates WebRay-M's value proposition and framework effectiveness
+
+### **Framework Usage Philosophy**
+- **Don't fight WebRay-M**: Use its patterns as intended, don't force original complexity-reader patterns
+- **Embrace modular architecture**: Build modules that could work independently or in other extensions  
+- **Leverage ContentScriptBridge**: Replace problematic injection patterns with reliable WebRay-M patterns
+- **Use the design system**: Don't rebuild UI components that WebRay-M already provides
+- **Document learnings**: Track what works, what doesn't, and what could be improved in WebRay-M
+- **Build for extraction**: Every major component should be designed as a potential WebRay-M module
 
 ---
 
