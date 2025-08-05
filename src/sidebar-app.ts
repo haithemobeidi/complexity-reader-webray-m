@@ -122,26 +122,29 @@ export class SidebarApp extends LitElement {
     
     /* Motivational Quote Section */
     .quote-section {
-      background: linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%);
-      border-radius: 16px;
-      padding: 12px 16px;
-      margin: 12px 16px;
-      box-shadow: 0 2px 8px rgba(253, 186, 116, 0.2);
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border: 2px solid #F59E0B;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 12px 16px 24px 16px;
+      text-align: center;
     }
     
     .quote-text {
+      font-family: Charter, Georgia, serif;
       font-style: italic;
-      font-size: 13px;
-      line-height: 1.4;
-      color: #7C2D12;
-      margin-bottom: 6px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #92400E;
+      margin-bottom: 8px;
     }
     
     .quote-author {
+      font-family: Inter, sans-serif;
       font-size: 11px;
-      color: #9A3412;
-      text-align: right;
-      font-weight: 600;
+      color: #A16207;
+      margin-top: 8px;
+      font-weight: 500;
     }
     
     .welcome-message {
@@ -225,9 +228,9 @@ export class SidebarApp extends LitElement {
       border-color: #A7F3D0;
     }
     .complexity-pill.moderate { 
-      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-      color: #B45309;
-      border-color: #F59E0B;
+      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+      color: #B91C1C;
+      border-color: #FCA5A5;
     }
     .complexity-pill.complex { 
       background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
@@ -1015,7 +1018,7 @@ export class SidebarApp extends LitElement {
     return html`
       <div class="reading-assistant ${this.isHeaderScrolled ? 'header-shrunk' : ''}">
         <header class="header ${this.isHeaderScrolled ? 'scrolled' : ''}">
-          <h1>ReadWise Pro</h1>
+          <h1>FocusRead</h1>
           <div class="tagline">Your friendly reading companion</div>
         </header>
         
