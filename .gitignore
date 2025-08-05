@@ -1,7 +1,32 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
+
+# Development files
 *.log
 .DS_Store
 .env
 .vscode/
+
+# Windows Zone Identifier files
 *.Zone.Identifier
+
+# Reference/screenshot files (not needed for extension)
+references/
+packages/
+
+# Development documentation (keep core docs)
+docs/analysis/
+docs/planning/
+docs/sessions/
+docs/testing/
+docs/MODULARIZATION_PLAN.md
+
+# Corrupted/backup files
+*-corrupted.*
+
+# Temporary files
+*.tmp
+*.temp
