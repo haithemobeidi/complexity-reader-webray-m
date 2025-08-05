@@ -34,16 +34,18 @@ export class SidebarApp extends LitElement {
   @state() private pagesAnalyzed = 0;
   @state() private message = '';
   @state() private currentQuote = FALLBACK_READING_QUOTES[Math.floor(Math.random() * FALLBACK_READING_QUOTES.length)];
+  @state() private isHeaderScrolled = false;
 
   static styles = css`
     :host {
       display: block;
       width: 100%;
       height: 100vh;
-      font-family: Charter, Georgia, serif;
-      background: linear-gradient(135deg, #F7F3E9 0%, #FFF8F0 100%);
-      color: #2D4A22;
+      font-family: Charter, Georgia, 'Times New Roman', serif;
+      background: linear-gradient(135deg, #F7F3E9 0%, #FDF8F0 100%);
+      color: #065F46;
       overflow-y: auto;
+      line-height: 1.6;
     }
     
     .reading-assistant {
@@ -56,33 +58,65 @@ export class SidebarApp extends LitElement {
     .header {
       background: linear-gradient(135deg, #065F46 0%, #047857 100%);
       color: #F7F3E9;
-      padding: 16px;
+      padding: 24px 20px;
       text-align: center;
-      position: relative;
-      border-radius: 0 0 16px 16px;
-      box-shadow: 0 4px 12px rgba(6, 95, 70, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 4px 20px rgba(6, 95, 70, 0.15);
+      transition: all 0.3s ease;
+    }
+    
+    .header.scrolled {
+      padding: 12px 20px;
+      border-radius: 0 0 12px 12px;
+    }
+    
+    .header.scrolled .tagline {
+      opacity: 0;
+      height: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+    
+    .header.scrolled h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+    
+    .header.scrolled::before {
+      font-size: 22px;
+      top: 12px;
+    }
+    
+    /* Add compensating padding when header shrinks */
+    .reading-assistant.header-shrunk {
+      padding-top: 12px;
     }
     
     .header::before {
-      content: "📚";
+      content: "📖";
       position: absolute;
       top: 12px;
-      left: 16px;
-      font-size: 24px;
+      left: 20px;
+      font-size: 28px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
     
     .header h1 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 700;
-      font-family: Charter, Georgia, serif;
+      margin: 0 0 6px 0;
+      font-size: 26px;
+      font-weight: bold;
+      font-family: Charter, Georgia, 'Times New Roman', serif;
       letter-spacing: 0.5px;
     }
     
     .header .tagline {
+      font-family: Inter, system-ui, sans-serif;
       font-size: 13px;
-      color: #A7F3D0;
-      margin-top: 4px;
+      color: #F7F3E9;
+      opacity: 0.9;
       font-style: italic;
     }
     
@@ -520,6 +554,9 @@ export class SidebarApp extends LitElement {
     // Sync session status with backend
     await this.syncSessionStatus();
     
+    // Set up scroll detection for sticky header
+    this.setupScrollDetection();
+    
     // Set up blur mode control event listeners
     this.addEventListener('blur-mode-start', this.handleBlurModeStart.bind(this));
     this.addEventListener('blur-mode-stop', this.handleBlurModeStop.bind(this));
@@ -550,6 +587,35 @@ export class SidebarApp extends LitElement {
       console.log('📚 Using fallback quote - fetch failed:', error);
       // Fallback is already set in initialization
     }
+  }
+
+  /**
+   * Set up scroll detection for shrinking header
+   */
+  private setupScrollDetection() {
+    // Wait for the component to be fully rendered
+    this.updateComplete.then(() => {
+      // The host element (:host) has the scroll, so listen to it
+      this.addEventListener('scroll', this.handleScroll.bind(this), { passive: true });
+    });
+  }
+
+  /**
+   * Handle scroll events - simple threshold without rapid updates
+   */
+  private handleScroll(event: Event) {
+    const scrollTop = this.scrollTop;
+    
+    // Use a larger threshold to prevent rapid toggling
+    if (scrollTop > 80 && !this.isHeaderScrolled) {
+      this.isHeaderScrolled = true;
+    } else if (scrollTop <= 5 && this.isHeaderScrolled) {
+      this.isHeaderScrolled = false;
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
   }
 
   private async analyzeCurrentPage() {
@@ -947,8 +1013,8 @@ export class SidebarApp extends LitElement {
 
   render() {
     return html`
-      <div class="reading-assistant">
-        <header class="header">
+      <div class="reading-assistant ${this.isHeaderScrolled ? 'header-shrunk' : ''}">
+        <header class="header ${this.isHeaderScrolled ? 'scrolled' : ''}">
           <h1>ReadWise Pro</h1>
           <div class="tagline">Your friendly reading companion</div>
         </header>
