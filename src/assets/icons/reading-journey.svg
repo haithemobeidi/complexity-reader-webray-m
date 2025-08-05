@@ -1,0 +1,23 @@
+<!-- Reading Journey - Based on journey/path icons -->
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Journey path -->
+  <path d="M4 6c4 0 6 2 8 2s4-2 8-2" stroke="#065F46" stroke-width="2"/>
+  <path d="M4 10c4 0 6 2 8 2s4-2 8-2" stroke="#FED7AA" stroke-width="2" opacity="0.7"/>
+  <path d="M4 14c4 0 6 2 8 2s4-2 8-2" stroke="#065F46" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Journey milestones -->
+  <circle cx="6" cy="6" r="2" fill="#065F46"/>
+  <circle cx="12" cy="8" r="2" fill="#FED7AA"/>
+  <circle cx="18" cy="6" r="2" fill="#065F46" opacity="0.7"/>
+  
+  <!-- Current position indicator -->
+  <circle cx="12" cy="12" r="3" fill="none" stroke="#FED7AA" stroke-width="2"/>
+  <circle cx="12" cy="12" r="1.5" fill="#FED7AA"/>
+  
+  <!-- Progress arrows -->
+  <path d="M8 18l2-2-2-2" stroke="#065F46" stroke-width="1.5" opacity="0.6"/>
+  <path d="M14 18l2-2-2-2" stroke="#FED7AA" stroke-width="1.5"/>
+  
+  <!-- Destination flag -->
+  <path d="M20 4v8l-3-2 3-2z" fill="#FED7AA" stroke="#065F46" stroke-width="1"/>
+</svg>

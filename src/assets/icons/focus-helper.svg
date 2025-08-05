@@ -1,0 +1,19 @@
+<!-- Focus Helper - Based on targeting/focus icon -->
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Crosshair targeting circles -->
+  <circle cx="12" cy="12" r="8" stroke="#065F46" stroke-width="2"/>
+  <circle cx="12" cy="12" r="4" stroke="#FED7AA" stroke-width="2" fill="#FED7AA" fill-opacity="0.2"/>
+  <circle cx="12" cy="12" r="1.5" fill="#065F46"/>
+  
+  <!-- Crosshair lines -->
+  <path d="M12 4v4" stroke="#065F46" stroke-width="2"/>
+  <path d="M12 16v4" stroke="#065F46" stroke-width="2"/>
+  <path d="M4 12h4" stroke="#065F46" stroke-width="2"/>
+  <path d="M16 12h4" stroke="#065F46" stroke-width="2"/>
+  
+  <!-- Corner brackets for focus frame -->
+  <path d="M6 6L8 6L8 8" stroke="#FED7AA" stroke-width="1.5"/>
+  <path d="M18 6L16 6L16 8" stroke="#FED7AA" stroke-width="1.5"/>
+  <path d="M6 18L8 18L8 16" stroke="#FED7AA" stroke-width="1.5"/>
+  <path d="M18 18L16 18L16 16" stroke="#FED7AA" stroke-width="1.5"/>
+</svg>

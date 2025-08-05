@@ -1065,17 +1065,7 @@ export class SidebarApp extends LitElement {
           <div class="section">
             <div class="section-title">
               <span class="custom-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                  <path d="M12 2l-2 6h4l-2-6z" fill="#FED7AA" fill-opacity="0.3" stroke="none"/>
-                  <circle cx="12" cy="2" r="1" fill="#FED7AA"/>
-                  <path d="M5 10h3" stroke="#FED7AA" stroke-width="2"/>
-                  <path d="M5 12h4" stroke="#FED7AA" stroke-width="2"/>
-                  <path d="M15 10h3" stroke="#065F46" stroke-width="1.5" opacity="0.4"/>
-                  <path d="M15 12h2" stroke="#065F46" stroke-width="1.5" opacity="0.4"/>
-                  <circle cx="12" cy="8" r="1.5" fill="none" stroke="#FED7AA" stroke-width="1"/>
-                </svg>
+                <img src="../assets/icons/focus-helper.svg" alt="Focus Helper" width="20" height="20" />
               </span>
               Focus Helper
             </div>
@@ -1107,15 +1097,7 @@ export class SidebarApp extends LitElement {
           <div class="speed-section">
             <div class="section-title">
               <span class="custom-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 6c3 0 6 1 8 1s5-1 8-1" stroke="#065F46" stroke-width="3"/>
-                  <path d="M2 10c4 0 7 0.5 10 0.5s6-0.5 10-0.5" stroke="#FED7AA" stroke-width="2.5"/>
-                  <path d="M2 14c2 0 4 1.5 6 1.5s4-1.5 8-1.5 6 1.5 8 1.5" stroke="#065F46" stroke-width="2"/>
-                  <path d="M2 18c5 0 8 0.5 12 0.5s7-0.5 10-0.5" stroke="#FED7AA" stroke-width="1.5"/>
-                  <path d="M18 5l2 1-2 1" stroke="#065F46" stroke-width="2"/>
-                  <path d="M20 9l2 1-2 1" stroke="#FED7AA" stroke-width="2"/>
-                  <path d="M19 13l2 1-2 1" stroke="#065F46" stroke-width="1.5"/>
-                </svg>
+                <img src="../assets/icons/reading-rhythm.svg" alt="Reading Rhythm" width="20" height="20" />
               </span>
               My Reading Rhythm
             </div>
@@ -1143,18 +1125,7 @@ export class SidebarApp extends LitElement {
           <div class="section">
             <div class="section-title">
               <span class="custom-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 2v20l3-3 3 3V2z" fill="#FED7AA" fill-opacity="0.2"/>
-                  <path d="M9 2v20l3-3 3 3V2z"/>
-                  <path d="M2 6c2 0 4 2 6 2s4-2 6-2" stroke="#FED7AA" stroke-width="2" opacity="0.6"/>
-                  <path d="M2 10c2 0 4 2 6 2s4-2 6-2" stroke="#FED7AA" stroke-width="2" opacity="0.4"/>
-                  <path d="M2 14c2 0 4 2 6 2s4-2 6-2" stroke="#FED7AA" stroke-width="2" opacity="0.2"/>
-                  <circle cx="8" cy="6" r="1" fill="#065F46"/>
-                  <circle cx="14" cy="10" r="1" fill="#FED7AA"/>
-                  <circle cx="8" cy="14" r="1" fill="#065F46" opacity="0.5"/>
-                  <circle cx="12" cy="8" r="2" fill="none" stroke="#065F46" stroke-width="1.5"/>
-                  <circle cx="12" cy="8" r="1" fill="#FED7AA"/>
-                </svg>
+                <img src="../assets/icons/reading-journey.svg" alt="Reading Journey" width="20" height="20" />
               </span>
               Your Reading Journey
             </div>

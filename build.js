@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import esbuild from 'esbuild';
-import { copyFileSync, writeFileSync, existsSync } from 'fs';
+import { copyFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 
 // Clean and fast Chrome extension build with esbuild
@@ -43,6 +43,15 @@ async function build() {
     copyFileSync('assets/icons/icon-16.png', 'dist/icon-16.png');
     copyFileSync('assets/icons/icon-48.png', 'dist/icon-48.png');
     copyFileSync('assets/icons/icon-128.png', 'dist/icon-128.png');
+    
+    // Create assets directory structure in dist
+    mkdirSync('dist/assets', { recursive: true });
+    mkdirSync('dist/assets/icons', { recursive: true });
+    
+    // Copy custom app icons
+    copyFileSync('src/assets/icons/focus-helper.svg', 'dist/assets/icons/focus-helper.svg');
+    copyFileSync('src/assets/icons/reading-rhythm.svg', 'dist/assets/icons/reading-rhythm.svg');
+    copyFileSync('src/assets/icons/reading-journey.svg', 'dist/assets/icons/reading-journey.svg');
 
     // Create sidebar.html (instead of popup.html)
     const sidebarHtml = `<!doctype html>
